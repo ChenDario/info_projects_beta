@@ -1,0 +1,29 @@
+DROP DATABASE IF EXISTS Progetto_Chen;
+CREATE DATABASE Progetto_Chen;
+USE Progetto_Chen;
+
+CREATE TABLE utenti (
+    ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Nome VARCHAR(50) NOT NULL,
+    Cognome VARCHAR(50) NOT NULL,
+    Username VARCHAR(30) NOT NULL UNIQUE,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    Password_hash VARCHAR(60) NOT NULL,  -- Lunghezza consigliata per hash bcrypt
+    Tipo ENUM('user', 'admin') DEFAULT 'user'
+);
+
+
+                    Da togliere: 
+INSERT INTO utenti (Nome, Cognome, Username, Email, Password_hash, Tipo) 
+VALUES
+-- Admin
+('Mario', 'Rossi', 'admin1', 'admin1@example.com', '$2b$10$hashed_password_admin1', 'admin'),
+('Luca', 'Bianchi', 'admin2', 'admin2@example.com', '$2b$10$hashed_password_admin2', 'admin'),
+
+-- Utenti normali (tipo 'user' di default)
+('Anna', 'Verdi', 'user1', 'user1@example.com', '$2b$10$hashed_password_user1', DEFAULT),
+('Paolo', 'Neri', 'user2', 'user2@example.com', '$2b$10$hashed_password_user2', DEFAULT),
+('Giulia', 'Russo', 'user3', 'user3@example.com', '$2b$10$hashed_password_user3', DEFAULT),
+('Marco', 'Ferrari', 'user4', 'user4@example.com', '$2b$10$hashed_password_user4', DEFAULT),
+('Sara', 'Esposito', 'user5', 'user5@example.com', '$2b$10$hashed_password_user5', DEFAULT);
+
