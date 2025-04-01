@@ -5,7 +5,6 @@
         unset($_SESSION['message']); // Pulisce il messaggio dopo che è stato visualizzato
     }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,6 +1,5 @@
 <?php
     include "db.php";
-    session_start();
 
     // Controlla se i dati del form sono stati inviati
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -9,7 +8,7 @@
         $password = $_POST['password'];
 
         // Usa prepared statement per evitare SQL Injection
-        $stmt = $conn->prepare("SELECT * FROM Utenti WHERE Username = ?");
+        $stmt = $conn->prepare("SELECT * FROM Users WHERE Username = ?");
         $stmt->bind_param("s", $username); // "s" indica una variabile di tipo stringa
         $stmt->execute();
         $result = $stmt->get_result();
@@ -34,12 +33,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!--Link CSS-->
+    <link rel="stylesheet" href="../css/home.css">
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Home </title>
+    <title>Home</title>
 </head>
 <body>
-    
+    <div>
+        <div class="sidebar"></div>
+        <div class="container">
+            <div class="navbar">
+                <input type="text" class="search-bar" placeholder="Cerca...">
+            </div>
+
+        </div>
+    </div>
 </body>
 </html>

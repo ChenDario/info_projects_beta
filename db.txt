@@ -27,3 +27,12 @@ VALUES
 ('Marco', 'Ferrari', 'user4', 'user4@example.com', '$2b$10$hashed_password_user4', DEFAULT),
 ('Sara', 'Esposito', 'user5', 'user5@example.com', '$2b$10$hashed_password_user5', DEFAULT);
 
+DB
+Si suppone di creare un database per la collezione di appunti dell'anno scolastico 2025 della 5AIA per la maturità
+Ogni studente(utente) dovrà avere nome, cognome, username(univoco), id, password per il login.
+Ogni studente visualizzare tutti gli appunti degli altri studenti, e potrà di conseguenza anche pubblicare 
+appunti(di ogni tipo di formato: img, txt, pdf o altro). 
+Ogni appunto ha come attributi principali la materia e il suo argomento specifico, avrà anche una data di pubblicazione. 
+
+
+ADMIN potrà bannare, eliminare qualunque utente o appunto che voglia. 
