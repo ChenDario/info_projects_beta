@@ -27,12 +27,13 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    z-index: 999;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Modificato per rimuovere l'ombra sulla sinistra */
 }
 
 .container {
-    margin-top: 50px;
+    margin-top: 30px; /* Distanza sufficiente per evitare che il contenuto venga coperto dalla navbar */
+    margin-left: 200px; /* Distanza dalla sidebar */
+    padding: 20px;
 }
 
 .search-bar {

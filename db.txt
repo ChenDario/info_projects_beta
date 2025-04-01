@@ -2,37 +2,56 @@ DROP DATABASE IF EXISTS Progetto_Chen;
 CREATE DATABASE Progetto_Chen;
 USE Progetto_Chen;
 
-CREATE TABLE utenti (
+CREATE TABLE Users (
     ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     Nome VARCHAR(50) NOT NULL,
     Cognome VARCHAR(50) NOT NULL,
     Username VARCHAR(30) NOT NULL UNIQUE,
     Email VARCHAR(255) NOT NULL UNIQUE,
-    Password_hash VARCHAR(60) NOT NULL,  -- Lunghezza consigliata per hash bcrypt
+    Password_hash VARCHAR(60) NOT NULL,
     Tipo ENUM('user', 'admin') DEFAULT 'user'
 );
 
+CREATE TABLE Materia(
+    ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Nome VARCHAR(100) NOT NULL
+);
 
-                    Da togliere: 
-INSERT INTO utenti (Nome, Cognome, Username, Email, Password_hash, Tipo) 
-VALUES
--- Admin
-('Mario', 'Rossi', 'admin1', 'admin1@example.com', '$2b$10$hashed_password_admin1', 'admin'),
-('Luca', 'Bianchi', 'admin2', 'admin2@example.com', '$2b$10$hashed_password_admin2', 'admin'),
+CREATE TABLE Argomento(
+    ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    Nome VARCHAR(100) NOT NULL
+);
 
--- Utenti normali (tipo 'user' di default)
-('Anna', 'Verdi', 'user1', 'user1@example.com', '$2b$10$hashed_password_user1', DEFAULT),
-('Paolo', 'Neri', 'user2', 'user2@example.com', '$2b$10$hashed_password_user2', DEFAULT),
-('Giulia', 'Russo', 'user3', 'user3@example.com', '$2b$10$hashed_password_user3', DEFAULT),
-('Marco', 'Ferrari', 'user4', 'user4@example.com', '$2b$10$hashed_password_user4', DEFAULT),
-('Sara', 'Esposito', 'user5', 'user5@example.com', '$2b$10$hashed_password_user5', DEFAULT);
+CREATE TABLE Notes (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    User_id INT NOT NULL,
+    Title VARCHAR(255) NOT NULL,
+    Materia_ID INT NOT NULL,
+    is_public BOOLEAN DEFAULT TRUE,
+    Content LONGTEXT,
+    Created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_id) REFERENCES Users(ID) ON DELETE CASCADE, 
+    FOREIGN KEY (Materia_ID) REFERENCES Materia(ID) ON DELETE CASCADE
+);
 
-DB
-Si suppone di creare un database per la collezione di appunti dell'anno scolastico 2025 della 5AIA per la maturità
-Ogni studente(utente) dovrà avere nome, cognome, username(univoco), id, password per il login.
-Ogni studente visualizzare tutti gli appunti degli altri studenti, e potrà di conseguenza anche pubblicare 
-appunti(di ogni tipo di formato: img, txt, pdf o altro). 
-Ogni appunto ha come attributi principali la materia e il suo argomento specifico, avrà anche una data di pubblicazione. 
+CREATE TABLE appunti_argomento(
+    IDNote INT NOT NULL, 
+    IDArgomento INT NOT NULL, 
+    PRIMARY KEY (IDNote, IDArgomento),
+    FOREIGN KEY (IDNote) REFERENCES Notes(ID) ON DELETE CASCADE,
+    FOREIGN KEY (IDArgomento) REFERENCES Argomento(ID) ON DELETE CASCADE
+);
 
-
-ADMIN potrà bannare, eliminare qualunque utente o appunto che voglia. 
+CREATE TABLE Files (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Note_id INT NOT NULL,
+    User_id INT NOT NULL,
+    Original_filename VARCHAR(255) NOT NULL,
+    Stored_filename VARCHAR(255) UNIQUE NOT NULL,
+    Mime_type VARCHAR(50) NOT NULL,
+    File_size INT NOT NULL,
+    Created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (Note_id) REFERENCES Notes(ID) ON DELETE CASCADE,
+    FOREIGN KEY (User_id) REFERENCES Users(ID) ON DELETE CASCADE
+);

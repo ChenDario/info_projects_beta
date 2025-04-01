@@ -42,11 +42,11 @@
 <body>
     <div>
         <div class="sidebar"></div>
+        <div class="navbar">
+            <input type="text" class="search-bar" placeholder="Cerca...">
+        </div>
         <div class="container">
-            <div class="navbar">
-                <input type="text" class="search-bar" placeholder="Cerca...">
-            </div>
-
+            <p>Testo che non sarà oscurato dalla navbar o dalla sidebar.</p>
         </div>
     </div>
 </body>
