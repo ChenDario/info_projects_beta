@@ -1,6 +1,4 @@
 body {
-    margin: 0;
-    padding: 0;
     background-color: #1a1a1a;
     font-family: Arial, sans-serif;
     display: flex;
@@ -8,6 +6,11 @@ body {
     align-items: center;
     min-height: 100vh;
     color: #ffffff;
+}
+
+::selection {
+    background: #4CAF50; /* Colore di sfondo della selezione */
+    color: white; /* Colore del testo selezionato */
 }
 
 .container {

@@ -7,6 +7,11 @@ html, body {
     display: flex;
     flex-direction: column;
 }
+
+::selection {
+    background: #45a049; /* Verde più scuro */
+}
+
 .container {
     flex: 1;
     display: flex;
@@ -16,9 +21,7 @@ html, body {
     width: 100%;
     box-sizing: border-box;
 }
-h1 {
-    margin-top: 20px;
-}
+
 .editor-container {
     margin: auto;
     width: 100%;
@@ -27,15 +30,18 @@ h1 {
     border-radius: 5px;
     background: #2d2d2d;
 }
+
 form {
     width: 80%;
 }
+
 .form-group {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
 }
+
 input, select {
     flex: 1;
     padding: 10px;
@@ -45,11 +51,28 @@ input, select {
     border: 1px solid #555;
     border-radius: 5px;
 }
+
 input:focus, select:focus {
     outline: none;
     border-color: #4CAF50;
     background-color: #3d3d3d;
 }
+
+input{
+    outline: none;
+    transition: 0.1s ease;
+}
+
+.btn {
+    margin: auto;
+    text-align: right;
+    margin-left: 20px;
+}
+
+.form-group{
+    margin-top: 15px;
+}
+
 button {
     padding: 12px;
     background-color: #4CAF50;
@@ -81,6 +104,7 @@ button:hover {
     background-color: #2d2d2d !important;
     color: #888 !important;
 }
+
 /* Colore di sfondo della riga attiva */
 .CodeMirror-activeline-background {
     background: rgba(255, 255, 255, 0.1) !important;
@@ -89,4 +113,14 @@ button:hover {
 /* Colore del cursore */
 .CodeMirror-cursor {
     border-left: 2px solid #4CAF50 !important;
+}
+
+/* Colore di sfondo della selezione */
+.CodeMirror-selectedtext {
+    background: #45a049 !important; /* Verde trasparente */
+}
+
+/* Stile quando si sta selezionando con il mouse */
+.CodeMirror-focused .CodeMirror-selected {
+    background: rgba(76, 175, 80, 0.5) !important;
 }

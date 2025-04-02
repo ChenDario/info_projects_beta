@@ -43,6 +43,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
 </head>
+<style>
+    ::selection {
+        background: #45a049; /* Verde più scuro */
+        color: #f1f1f1; /* Testo quasi bianco */
+    }
+</style>
 <body>
     <div>
         <div class="sidebar"></div>
@@ -62,7 +68,7 @@
                         <div class='card'>
                             <h2 class='card-title'>{$row['Title']}</h2>
                             <div class='card-content-wrapper'>
-                                <p class='card-content'>{$row['Content']} Lorem ipsum dolor sit, amet consectetur adipisicing elit. Deserunt nulla ex ducimus, totam explicabo error corrupti ab quia atque modi quis maxime mollitia at? Ut tempora consequuntur impedit recusandae voluptatibus.</p>
+                                <p class='card-content'>{$row['Content']}</p>
                             </div>
                             <a href='noteDetail.php?id={$row['ID']}' class='read-more'>Leggi di più</a>
                         </div>
@@ -70,8 +76,9 @@
                 }
             ?>
         </div>
-
-        <a href="addNote.php" class="floating-button"> + </a>
+        <div class="btn">
+            <button class="floating-button" onclick="location.href='addNote.php'">+</button>
+        </div>
     </div>
 </body>
 </html>

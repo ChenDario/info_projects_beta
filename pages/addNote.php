@@ -5,16 +5,16 @@
     $stmt = $conn->prepare("SELECT * FROM Materia");
     $stmt->execute();
     $result = $stmt->get_result();
-
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="it">
 <head>
     <!--Link CSS-->
-    <link rel="stylesheet" href="../css/notes.css">
+    <link rel="stylesheet" href="../css/notes.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aggiungi Nota</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <title>Add Note</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/display/placeholder.min.js"></script>
@@ -37,9 +37,14 @@
                 </select>
             </div>
             <div class="editor-container">
-                <textarea id="editor" name="content" placeholder="Scrivi la tua nota..." required></textarea>
+                <textarea id="editor" name="content" placeholder="Scrivi la tua nota..." ></textarea>
             </div>
-            <button type="submit">Salva Nota</button>
+            <div class="form-group">
+                <input type="text" name="tags" placeholder="Aggiungi tag (#tag1 #tag2)" class="tags-input">
+                <div class="btn">
+                    <button type="submit"> Save </button>
+                </div>
+            </div>
         </form>
     </div>
     <script>
