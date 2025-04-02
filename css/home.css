@@ -1,3 +1,8 @@
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -13,13 +18,14 @@ body {
     width: 200px;
     height: 100%;
     background-color: #2d2d2d;
-    z-index: 1000; /* Incrementato per posizionare la sidebar sopra la navbar */
+    z-index: 1000;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .navbar {
     position: fixed;
     top: 0;
+    z-index: 999;
     left: 200px;
     width: calc(100% - 200px);
     height: 50px;
@@ -27,7 +33,7 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Modificato per rimuovere l'ombra sulla sinistra */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .search-bar {
@@ -49,40 +55,76 @@ body {
 }
 
 .container {
-    position: relative;
+    position: absolute;
     top: 50px;
-    margin-left: 200px;
+    left: 200px;
+    z-index: 0;
+    right: 0;
+    bottom: 0;
     padding: 20px;
     background-color: #141414;
-    min-height: calc(100vh - 50px);
-    overflow: auto;
-    display: flex; /* Per allineare le card orizzontalmente */
-    flex-wrap: wrap; /* Permette di andare a capo se non c'è spazio */
-    gap: 20px; /* Distanza tra le card */
+    overflow-y: auto; /* Abilita lo scroll solo su questo div */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    height: calc(100vh - 50px); /* Imposta l'altezza per consentire lo scroll */
 }
 
 .card {
-    width: 20%; /* Occupa il 20% della larghezza */
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
     height: 20vh;
     background-color: #f8f9fa;
     color: #333;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
+    text-align: left;
+    position: relative;
+}
+
+.card-title {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.card-content-wrapper {
+    max-height: 50px; /* Imposta l'altezza massima per l'anteprima */
+    overflow: hidden; /* Nasconde il contenuto in eccesso */
+    position: relative;
+}
+
+.card-content {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box; 
+    -webkit-line-clamp: 2; /* Limita a 2 righe */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Aggiunge i puntini di sospensione se il testo è troppo lungo */
+}
+.read-more {
+    display: block;
+    color: #007bff;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 5px;
 }
 
 .floating-button {
     position: fixed;
-    bottom: 40px; /* Maggiore distanza dal fondo */
-    right: 40px; /* Maggiore distanza dal bordo destro */
-    background-color: #4CAF50; /* Colore verde */
+    bottom: 40px;
+    right: 40px;
+    background-color: #4CAF50;
     color: white;
-    padding: 20px 30px; /* Aumenta la dimensione */
+    padding: 20px 30px;
     border: none;
-    border-radius: 15px; /* Angoli più arrotondati */
+    border-radius: 15px;
     text-decoration: none;
-    font-size: 18px; /* Testo più grande */
+    font-size: 18px;
     font-weight: bold;
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
     transition: background 0.3s ease, transform 0.2s ease;
@@ -90,7 +132,5 @@ body {
 
 .floating-button:hover {
     background-color: #45a049;
-    transform: scale(1.1); /* Effetto di ingrandimento */
+    transform: scale(1.1);
 }
-
-

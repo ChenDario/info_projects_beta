@@ -17,6 +17,18 @@ CREATE TABLE Materia(
     Nome VARCHAR(100) NOT NULL
 );
 
+INSERT INTO materia (Nome) VALUES 
+("Italiano"),
+("Matematica"),
+("Storia"),
+("Gestione Progetto Organizzazione d'Impresa"),
+("Tecnologie Progettazione Sistemi Informatici e Telecomunicazioni"),
+("Informatica"),
+("Inglese"),
+("Scienze Motorie"),
+("Sistemi e Reti"), 
+("Religione")
+
 CREATE TABLE Argomento(
     ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     Nome VARCHAR(100) NOT NULL

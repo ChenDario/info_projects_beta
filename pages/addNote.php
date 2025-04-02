@@ -2,26 +2,57 @@
     include "db.php";
     session_start();
 
-    $stmt = $conn->prepare("SELECT ");
-?>
+    $stmt = $conn->prepare("SELECT * FROM Materia");
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="it">
 <head>
+    <!--Link CSS-->
+    <link rel="stylesheet" href="../css/notes.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aggiungi Nota</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/display/placeholder.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/selection/active-line.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
 </head>
 <body>
-    <h2>Add a Note</h2>
-    <form action="save_note.php" method="post">
-        <input type="text" name="title" placeholder="Titolo..." required>
-        <select name="materia" id="materia">
-
-        </select>
-        <br>
-        <textarea name="content" placeholder="Scrivi la tua nota..." required></textarea><br>
-        <button type="submit">Salva Nota</button>
-    </form>
+    <div class="container">
+        <h1>Adding Note</h1>
+        <form action="save_note.php" method="post">
+            <div class="form-group">
+                <input type="text" name="title" placeholder="Titolo..." required>
+                <select name="materia" id="materia">
+                    <?php
+                        while($row = $result->fetch_assoc()) {
+                            echo "<option value='{$row['ID']}'> {$row['Nome']} </option>";
+                        }
+                    ?>
+                </select>
+            </div>
+            <div class="editor-container">
+                <textarea id="editor" name="content" placeholder="Scrivi la tua nota..." required></textarea>
+            </div>
+            <button type="submit">Salva Nota</button>
+        </form>
+    </div>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+            mode: "text/x-php",
+            lineNumbers: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            autoCloseTags: true,
+            placeholder: "Scrivi la tua nota...",
+            theme: "default"
+        });
+        editor.setSize("100%", "100%");
+    </script>
 </body>
 </html>

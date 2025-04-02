@@ -37,7 +37,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!--Link CSS-->
+    <!-- Link CSS -->
     <link rel="stylesheet" href="../css/home.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,14 +50,28 @@
             <input type="text" class="search-bar" placeholder="Cerca...">
         </div>
         <div class="container">
-            <div class="card">
-                <h2>Titolo della Card</h2>
-                <p>Contenuto della card...</p>
-            </div>
+            <?php
+                // Recupera le note dell'utente loggato
+                $stmt = $conn->prepare("SELECT * FROM Notes");
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                // Mostra le note
+                while ($row = $result->fetch_assoc()) {
+                    echo "
+                        <div class='card'>
+                            <h2 class='card-title'>{$row['Title']}</h2>
+                            <div class='card-content-wrapper'>
+                                <p class='card-content'>{$row['Content']} Lorem ipsum dolor sit, amet consectetur adipisicing elit. Deserunt nulla ex ducimus, totam explicabo error corrupti ab quia atque modi quis maxime mollitia at? Ut tempora consequuntur impedit recusandae voluptatibus.</p>
+                            </div>
+                            <a href='noteDetail.php?id={$row['ID']}' class='read-more'>Leggi di più</a>
+                        </div>
+                    ";
+                }
+            ?>
         </div>
 
         <a href="addNote.php" class="floating-button"> + </a>
-
     </div>
 </body>
 </html>
