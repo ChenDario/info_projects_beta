@@ -30,12 +30,6 @@ body {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Modificato per rimuovere l'ombra sulla sinistra */
 }
 
-.container {
-    margin-top: 30px; /* Distanza sufficiente per evitare che il contenuto venga coperto dalla navbar */
-    margin-left: 200px; /* Distanza dalla sidebar */
-    padding: 20px;
-}
-
 .search-bar {
     margin-right: 20px;
     padding: 6px;
@@ -53,3 +47,50 @@ body {
     border-color: #4CAF50;
     background-color: #454545;
 }
+
+.container {
+    position: relative;
+    top: 50px;
+    margin-left: 200px;
+    padding: 20px;
+    background-color: #141414;
+    min-height: calc(100vh - 50px);
+    overflow: auto;
+    display: flex; /* Per allineare le card orizzontalmente */
+    flex-wrap: wrap; /* Permette di andare a capo se non c'è spazio */
+    gap: 20px; /* Distanza tra le card */
+}
+
+.card {
+    width: 20%; /* Occupa il 20% della larghezza */
+    height: 20vh;
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.floating-button {
+    position: fixed;
+    bottom: 40px; /* Maggiore distanza dal fondo */
+    right: 40px; /* Maggiore distanza dal bordo destro */
+    background-color: #4CAF50; /* Colore verde */
+    color: white;
+    padding: 20px 30px; /* Aumenta la dimensione */
+    border: none;
+    border-radius: 15px; /* Angoli più arrotondati */
+    text-decoration: none;
+    font-size: 18px; /* Testo più grande */
+    font-weight: bold;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.floating-button:hover {
+    background-color: #45a049;
+    transform: scale(1.1); /* Effetto di ingrandimento */
+}
+
+

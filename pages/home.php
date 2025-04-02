@@ -1,11 +1,12 @@
 <?php
+    session_start();
     include "db.php";
 
     // Controlla se i dati del form sono stati inviati
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Recupera i dati dal form
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        $username = trim($_POST['username']);
+        $password = trim($_POST['password']);
 
         // Usa prepared statement per evitare SQL Injection
         $stmt = $conn->prepare("SELECT * FROM Users WHERE Username = ?");
@@ -22,6 +23,9 @@
                 header("Location: ../index.php");
                 exit();
             }
+
+            $_SESSION['username'] = $user['Username']; // Salva solo il nome utente
+            $_SESSION['user_id'] = $user['ID']; // Salva anche l'ID se serve
         } else {
             $_SESSION['message'] = "Username errato";
             header("Location: ../index.php");
@@ -46,8 +50,14 @@
             <input type="text" class="search-bar" placeholder="Cerca...">
         </div>
         <div class="container">
-            <p>Testo che non sarà oscurato dalla navbar o dalla sidebar.</p>
+            <div class="card">
+                <h2>Titolo della Card</h2>
+                <p>Contenuto della card...</p>
+            </div>
         </div>
+
+        <a href="addNote.php" class="floating-button"> + </a>
+
     </div>
 </body>
 </html>

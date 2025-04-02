@@ -1,7 +1,7 @@
 <?php
     session_start();
     if (isset($_SESSION['message'])) {
-        echo "<script>alert('".$_SESSION['error_message']."');</script>";
+        echo "<script>alert('".$_SESSION['message']."');</script>";
         unset($_SESSION['message']); // Pulisce il messaggio dopo che è stato visualizzato
     }
 ?>
