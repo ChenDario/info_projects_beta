@@ -1,5 +1,5 @@
 <?php
-    include "db.php";
+    include "../includes/db.php";
     session_start();
 
     $stmt = $conn->prepare("SELECT * FROM Materia");

@@ -1,6 +1,6 @@
-<?php
+<?php   
+    include "../includes/db.php";
     session_start();
-    include "db.php";
 
     // Controlla se i dati del form sono stati inviati
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -43,12 +43,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
 </head>
-<style>
-    ::selection {
-        background: #45a049; /* Verde più scuro */
-        color: #f1f1f1; /* Testo quasi bianco */
-    }
-</style>
 <body>
     <div>
         <div class="sidebar"></div>
@@ -70,7 +64,7 @@
                             <div class='card-content-wrapper'>
                                 <p class='card-content'>{$row['Content']}</p>
                             </div>
-                            <a href='noteDetail.php?id={$row['ID']}' class='read-more'>Leggi di più</a>
+                            <a href='noteDetail.php?id={$row['ID']}' class='read-more'> More </a>
                         </div>
                     ";
                 }
