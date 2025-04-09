@@ -49,8 +49,10 @@
         <div class="sidebar">
             <!-- Sezione profilo/icona -->
             <div class="sidebar-profile">
-                <h3 class="username"><?php echo $_SESSION['username']; ?></h3>
+                <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
             </div>
+            <h3 class="username"><?php echo $_SESSION['username']; ?></h3>
+
 
             <!-- Sezioni informative -->
             <div class="sidebar-sections">

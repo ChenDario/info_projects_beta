@@ -5,17 +5,22 @@ body {
     background-color: #0e0e0e;
     color: white;
     font-family: Arial, sans-serif;
-    display: flex;
 }
 
 /* Sidebar */
 .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
     width: 220px;
     background-color: #1c1c1c;
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
 }
 
 .sidebar-profile {
@@ -26,25 +31,33 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 28px;
+    font-size: 36px;
     font-weight: bold;
     color: white;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .username {
-    margin-top: 10px;
-    font-size: 18px;
+    font-size: 16px;
     color: white;
     text-align: center;
+    word-break: break-word;
+    max-width: 100%;
 }
 
+
+/* Sidebar item */
 .sidebar-item {
     background-color: #2a2a2a;
     border-radius: 10px;
     padding: 10px;
     margin-top: 10px;
     width: 100%;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-item:hover {
+    background-color: #353535;
 }
 
 .item-header {
@@ -70,10 +83,15 @@ body {
     text-decoration: none;
 }
 
+.item-more:hover {
+    text-decoration: underline;
+}
+
+/* Navbar */
 .navbar {
     padding: 15px;
     background-color: #1a1a1a;
-    width: 100%;
+    width: calc(100% - 220px);
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -81,24 +99,36 @@ body {
     top: 0;
     left: 220px;
     z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .search-bar {
     padding: 10px;
     width: 250px;
-    border: none;
+    margin-right: 50px;
+    border: 1px solid #444;
     border-radius: 10px;
     background-color: #333;
     color: white;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
 }
+
+.search-bar:hover,
+.search-bar:focus {
+    border: 1px solid #4CAF50;
+    box-shadow: 0 0 5px #4CAF50;
+    outline: none;
+}
+
 
 /* Contenitore principale */
 .container {
-    margin-top: 70px;
+    margin-top: 80px;
     margin-left: 240px;
     padding: 20px;
     display: flex;
     flex-direction: column;
+    align-items: center; /* Centra le card orizzontalmente */
     gap: 20px;
 }
 
@@ -108,11 +138,15 @@ body {
     border-radius: 12px;
     padding: 20px;
     border: 1px solid #2f2f2f;
+    transition: transform 0.2s ease, border 0.2s ease;
+    width: 80%;
 }
 
-.card:nth-child(2) {
+.card:hover {
+    transform: translateY(-3px);
     border: 1px solid #4CAF50;
 }
+
 
 .card-title {
     font-size: 18px;
@@ -136,6 +170,10 @@ body {
     font-size: 14px;
 }
 
+.read-more:hover {
+    text-decoration: underline;
+}
+
 /* Bottone fluttuante */
 .btn {
     position: fixed;
@@ -153,6 +191,7 @@ body {
     font-size: 30px;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
 }
 
 .floating-button:hover {
