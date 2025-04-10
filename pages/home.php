@@ -53,25 +53,14 @@
             </div>
             <h3 class="username"><?php echo $_SESSION['username']; ?></h3>
 
-
             <!-- Sezioni informative -->
             <div class="sidebar-sections">
                 <div class="sidebar-item">
-                    <div class="item-header">
-                        <img src="../path/to/icon1.png" alt="Icon" class="item-icon">
-                        <h4>Derivata</h4>
-                    </div>
                     <p class="item-content">La derivata è il limite del rapporto incrementale...</p>
-                    <a href="#" class="item-more">More</a>
                 </div>
 
                 <div class="sidebar-item">
-                    <div class="item-header">
-                        <img src="../path/to/icon2.png" alt="Icon" class="item-icon">
-                        <h4>Emile Zola</h4>
-                    </div>
                     <p class="item-content">Pioniere del naturalismo letterario...</p>
-                    <a href="#" class="item-more">More</a>
                 </div>
             </div>
         </div>

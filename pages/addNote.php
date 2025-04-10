@@ -24,7 +24,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Adding Note</h1>
+        <div class="header">
+            <button class="floating-button" onclick="location.href='home.php'">Home</button>
+            <h1>Adding Note</h1>
+        </div>
+
         <form action="save_note.php" method="post">
             <div class="form-group">
                 <input type="text" name="title" placeholder="Titolo..." required>
