@@ -185,3 +185,24 @@ body {
 .floating-button:hover {
     background-color: #45a049;
 }
+
+.logout-link {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: block;
+    width: 30px;
+    height: 30px;
+}
+
+.logout-link img {
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+    filter: brightness(0.9);
+    transition: filter 0.2s ease;
+}
+
+.logout-link img:hover {
+    filter: brightness(1.2);
+}

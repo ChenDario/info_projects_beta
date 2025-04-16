@@ -63,10 +63,17 @@
                     <p class="item-content">Pioniere del naturalismo letterario...</p>
                 </div>
             </div>
+            <div class="logout-container">
+                <a href="logout.php" class="logout-link">
+                    <img src="../images/logout.png" alt="Logout" class="logout-icon">
+                </a>
+            </div>
         </div>
+
         <div class="navbar">
             <input type="text" class="search-bar" placeholder="Cerca...">
         </div>
+
         <div class="container">
             <?php
                 // Recupera le note dell'utente loggato

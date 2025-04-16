@@ -22,7 +22,7 @@
 
         if ($row = $result->fetch_assoc()) {
             $note_title = htmlspecialchars($row['Title']);
-            $note_content = htmlspecialchars($row['Content']);
+            $note_content = $row['Content'];
         } else {
             // Gestione nota non trovata
             $_SESSION['message'] = "Nota non trovata";
@@ -55,7 +55,9 @@
         <h1><?php echo $note_title; ?></h1>
         
         <div class="note-content">
-            <?php echo nl2br($note_content); ?>
+            <p>
+                <?php echo nl2br($note_content); ?>
+            </p>    
         </div>
     </div>
 </body>
