@@ -1,7 +1,7 @@
 DROP DATABASE IF EXISTS Progetto_Chen;
 CREATE DATABASE Progetto_Chen;
 USE Progetto_Chen;
-
+-- Aggiungere due date, quella di creazione e quella dell'ultimo aggiornamento del profilo
 CREATE TABLE Users (
     ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     Nome VARCHAR(50) NOT NULL,
@@ -9,7 +9,9 @@ CREATE TABLE Users (
     Username VARCHAR(30) NOT NULL UNIQUE,
     Email VARCHAR(255) NOT NULL UNIQUE,
     Password_hash VARCHAR(60) NOT NULL,
-    Tipo ENUM('user', 'admin') DEFAULT 'user'
+    Tipo ENUM('user', 'admin') DEFAULT 'user',
+    Created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE Materia(

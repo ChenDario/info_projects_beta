@@ -1,3 +1,8 @@
+::selection {
+    background: #4CAF50; /* Colore di sfondo della selezione */
+    color: white;        /* Colore del testo selezionato */
+}
+
 /* Impostazioni generali */
 body {
     margin: 0;
@@ -6,6 +11,7 @@ body {
     color: white;
     font-family: Arial, sans-serif;
 }
+
 
 /* Sidebar */
 .sidebar {
@@ -45,6 +51,15 @@ body {
     max-width: 100%;
 }
 
+.username a{
+    text-decoration: none;
+    color: #c3c3c3;
+    transition: filter 0.2s ease;
+}
+
+.username a:hover {
+    filter: brightness(1.2);
+}
 
 /* Sidebar item */
 .sidebar-sections {
@@ -188,15 +203,13 @@ body {
 
 .logout-link {
     position: absolute;
-    bottom: 20px;
-    left: 20px;
-    display: block;
-    width: 30px;
-    height: 30px;
+    margin-top: auto;
+    bottom: 50px;
+    left: 15px;
 }
 
 .logout-link img {
-    width: 100%;
+    width: 90%;
     height: auto;
     cursor: pointer;
     filter: brightness(0.9);
