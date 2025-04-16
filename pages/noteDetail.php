@@ -15,7 +15,7 @@
         $note_id = (int)$_GET['id'];
 
         // Recupera i dettagli della nota
-        $stmt = $conn->prepare("SELECT Title, Content FROM Notes WHERE ID = ?");
+        $stmt = $conn->prepare("SELECT Title, Content, U.Username AS Username, DATE(N.Updated_at) AS NoteUpdate, DATE(N.Created_at) AS NoteCreate, M.Nome AS NomeMateria FROM Notes N INNER JOIN Users U ON U.ID = N.User_id INNER JOIN Materia M ON M.ID = Materia_ID WHERE N.ID = ?");
         $stmt->bind_param("i", $note_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -23,6 +23,10 @@
         if ($row = $result->fetch_assoc()) {
             $note_title = htmlspecialchars($row['Title']);
             $note_content = $row['Content'];
+            $note_username = $row['Username'];
+            $note_create = $row['NoteCreate'];
+            $note_update = $row['NoteUpdate'];
+            $materia = $row['NomeMateria'];
         } else {
             // Gestione nota non trovata
             $_SESSION['message'] = "Nota non trovata";
@@ -53,6 +57,14 @@
         </div>
 
         <h1><?php echo $note_title; ?></h1>
+
+        <div class="info">
+            <?php
+                echo "
+                    {$materia} &nbsp | &nbsp {$note_username} &nbsp | &nbsp Created: {$note_create} &nbsp | &nbsp Last Update: {$note_update}
+                ";
+            ?>
+        </div>
         
         <div class="note-content">
             <p>

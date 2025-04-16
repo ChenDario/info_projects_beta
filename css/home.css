@@ -1,39 +1,40 @@
+/* Personalizzazione della selezione di testo */
 ::selection {
-    background: #4CAF50; /* Colore di sfondo della selezione */
-    color: white;        /* Colore del testo selezionato */
+    background: #4CAF50;
+    color: white;
 }
 
-/* Impostazioni generali */
+/* Impostazioni generali per il corpo della pagina */
 body {
     margin: 0;
     padding: 0;
-    background-color: #0e0e0e;
-    color: white;
+    background-color: #0e0e0e; /* Colore di sfondo scuro */
+    color: white; /* Colore del testo bianco */
     font-family: Arial, sans-serif;
 }
-
 
 /* Sidebar */
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
+    height: 100vh; /* Altezza a schermo intero */
     width: 220px;
-    background-color: #1c1c1c;
+    background-color: #1c1c1c; /* Colore di sfondo scuro per la sidebar */
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Ombra laterale */
 }
 
+/* Profilo utente in sidebar */
 .sidebar-profile {
     width: 80px;
     height: 80px;
-    background-color: #4CAF50;
-    border-radius: 50%;
+    background-color: #4CAF50; /* Colore verde per il profilo */
+    border-radius: 50%; /* Forma circolare */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,6 +44,7 @@ body {
     margin-bottom: 10px;
 }
 
+/* Username nell'intestazione della sidebar */
 .username {
     font-size: 16px;
     color: white;
@@ -51,17 +53,17 @@ body {
     max-width: 100%;
 }
 
-.username a{
+.username a {
     text-decoration: none;
     color: #c3c3c3;
-    transition: filter 0.2s ease;
+    transition: filter 0.2s ease; /* Transizione per effetto hover */
 }
 
 .username a:hover {
-    filter: brightness(1.2);
+    filter: brightness(1.2); /* Effetto hover per luminosità */
 }
 
-/* Sidebar item */
+/* Sezioni della sidebar */
 .sidebar-sections {
     width: 100%;
     display: flex;
@@ -69,42 +71,50 @@ body {
     align-items: center;
 }
 
+/* Etichette e contenuti nei filtri */
+.sidebar-sections .item-content {
+    width: 90%;
+    text-align: left;
+    margin-bottom: 4px;
+    margin-top: 12px;
+}
+
+/* Elementi della sidebar */
 .sidebar-item {
-    background-color: #2a2a2a;
+    background-color: #252525; /* Sfondo scuro per i filtri */
     border-radius: 10px;
     padding: 10px;
-    margin-top: 10px;
+    margin-top: 6px; /* Ridotto da 10px per più compattezza */
     width: 90%;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease; /* Transizione al passaggio del mouse */
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .sidebar-item:hover {
-    background-color: #353535;
+    background-color: #373737; /* Cambia il colore al passaggio del mouse */
 }
 
 .item-content {
-    color: #cfcfcf;
+    color: #cfcfcf; /* Colore chiaro per il testo delle etichette */
 }
 
-
-/* Navbar */
+/* Navbar (barra in alto) */
 .navbar {
     padding: 15px;
-    background-color: #1a1a1a;
-    width: calc(100% - 220px);
+    background-color: #1c1c1c; /* Colore di sfondo della navbar */
+    width: calc(100% - 260px); /* Larghezza che tiene conto della sidebar */
     display: flex;
-    align-items: center;
     justify-content: flex-end;
     position: fixed;
     top: 0;
-    left: 220px;
+    left: 260px; /* Spostato a destra della sidebar */
     z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Ombra sotto la navbar */
 }
 
+/* Barra di ricerca */
 .search-bar {
     padding: 10px;
     width: 250px;
@@ -116,40 +126,37 @@ body {
     transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
-.search-bar:hover,
-.search-bar:focus {
-    border: 1px solid #4CAF50;
-    box-shadow: 0 0 5px #4CAF50;
-    outline: none;
+.search-bar:hover, .search-bar:focus {
+    border: 1px solid #4CAF50; /* Colore di bordo verde al focus o hover */
+    box-shadow: 0 0 5px #4CAF50; /* Ombra verde al focus */
+    outline: none; /* Rimuove il contorno di default */
 }
 
-
-/* Contenitore principale */
+/* Contenitore principale delle note */
 .container {
     margin-top: 80px;
     margin-left: 240px;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra le card orizzontalmente */
-    gap: 20px;
+    align-items: center;
+    gap: 20px; /* Spaziatura tra le note */
 }
 
-/* Card */
+/* Card (contenitore per ciascuna nota) */
 .card {
     background-color: #1e1e1e;
     border-radius: 12px;
     padding: 20px;
     border: 1px solid #2f2f2f;
     transition: transform 0.2s ease, border 0.2s ease;
-    width: 80%;
+    width: 80%; /* Larghezza del 80% della finestra */
 }
 
 .card:hover {
-    transform: translateY(-3px);
-    border: 1px solid #4CAF50;
+    transform: translateY(-3px); /* Leggera traslazione al passaggio del mouse */
+    border: 1px solid #4CAF50; /* Cambia il bordo a verde */
 }
-
 
 .card-title {
     font-size: 18px;
@@ -159,25 +166,25 @@ body {
 
 .card-content-wrapper {
     max-height: 60px;
-    overflow: hidden;
+    overflow: hidden; /* Nasconde il testo che esce dai limiti */
 }
 
 .card-content {
     font-size: 14px;
-    color: #ccc;
+    color: #ccc; /* Colore chiaro per il contenuto */
 }
 
 .read-more {
-    color: #4CAF50;
+    color: #4CAF50; /* Colore verde per il link */
     text-decoration: none;
     font-size: 14px;
 }
 
 .read-more:hover {
-    text-decoration: underline;
+    text-decoration: underline; /* Sottolinea il link al passaggio del mouse */
 }
 
-/* Bottone fluttuante */
+/* Bottone fluttuante per aggiungere note */
 .btn {
     position: fixed;
     bottom: 50px;
@@ -187,7 +194,7 @@ body {
 .floating-button {
     width: 50px;
     height: 50px;
-    background-color: #4CAF50;
+    background-color: #4CAF50; /* Colore verde per il bottone */
     border: none;
     border-radius: 50%;
     color: white;
@@ -198,9 +205,10 @@ body {
 }
 
 .floating-button:hover {
-    background-color: #45a049;
+    background-color: #45a049; /* Cambia il colore al passaggio del mouse */
 }
 
+/* Link di logout */
 .logout-link {
     position: absolute;
     margin-top: auto;
@@ -212,10 +220,73 @@ body {
     width: 90%;
     height: auto;
     cursor: pointer;
-    filter: brightness(0.9);
+    filter: brightness(0.9); /* Scurisce l'icona */
     transition: filter 0.2s ease;
 }
 
 .logout-link img:hover {
-    filter: brightness(1.2);
+    filter: brightness(1.2); /* Aumenta la luminosità al passaggio del mouse */
+}
+
+/* Campi di filtro (input e select) */
+.filter-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 5px;
+    padding: 8px;
+    background-color: #2f2f2f;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+}
+
+.filter-input:focus {
+    border-color: #4CAF50; /* Colore del bordo verde al focus */
+    outline: none; /* Rimuove il contorno di default */
+}
+
+/* Bottone per applicare i filtri */
+.filter-button {
+    background-color: #4CAF50; /* Colore verde per il bottone */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+/* CSS Per il popup calendario Flatpickr */
+.filter-button:hover {
+    background-color: #45a049; /* Cambia il colore al passaggio del mouse */
+}
+
+.flatpickr-calendar {
+    background: #282828 !important;
+    border: 1px solid #333 !important;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6) !important;
+}
+
+.flatpickr-day, .flatpickr-month, .flatpickr-weekday {
+    color: #cfcfcf !important;
+    border-radius: 4px;
+}
+
+.flatpickr-day:hover {
+    background: #494949 !important;
+    color: white !important;
+}
+
+.flatpickr-day.today {
+    border: 1px solid #4CAF50 !important;
+}
+
+.flatpickr-day.selected {
+    background: #202020 !important;
+    color: white !important;
+    border: 1px solid #00338c !important;
 }

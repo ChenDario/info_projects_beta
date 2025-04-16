@@ -1,38 +1,46 @@
-<?php   
+<?php  
     include "../includes/db.php";
     session_start();
 
-    // Controlla se i dati del form di login sono stati inviati
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'], $_POST['password'])) {
+        // Rimozione degli spazi bianchi dai dati ricevuti
         $username = trim($_POST['username']);
         $password = trim($_POST['password']);
 
+        // Preparazione della query per ottenere l'utente in base al nome utente
         $stmt = $conn->prepare("SELECT * FROM Users WHERE Username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
 
+        // Se l'utente esiste
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
+
+            // Verifica se la password è corretta
             if (!password_verify($password, $user['Password_hash'])) {
                 $_SESSION['message'] = "Password errata";
                 header("Location: ../index.php");
                 exit();
             }
+
+            // Salvataggio dell'ID utente nella sessione
             $_SESSION['user_id'] = $user['ID'];
         } else {
+            // Username non trovato
             $_SESSION['message'] = "Username errato";
             header("Location: ../index.php");
             exit();
         }
     }
 
-    // Ottieni i dati dell'utente
+    // Controllo che l'utente sia loggato
     if (!isset($_SESSION['user_id'])) {
         header("Location: ../index.php");
         exit();
     }
 
+    // Recupero dei dati dell'utente loggato
     $user_id = $_SESSION['user_id'];
     $stmt = $conn->prepare("SELECT Username FROM Users WHERE ID = ?");
     $stmt->bind_param("i", $user_id);
@@ -42,31 +50,79 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <link rel="stylesheet" href="../css/home.css">
+    <!-- Framework Flatpickr per le date-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
 </head>
 <body>
     <div>
-        <!-- Sidebar -->
+        <!-- Sidebar laterale -->
         <div class="sidebar">
+            <!-- Profilo utente con iniziale -->
             <div class="sidebar-profile">
                 <?php echo strtoupper(substr($userData['Username'], 0, 1)); ?>
             </div>
-            <h3 class="username"><a href="profile.php"><?= $userData['Username'] ?></a></h3>
+            <!-- Link al profilo -->
+            <h3 class="username"><a href="profile.php"><?= htmlspecialchars($userData['Username']) ?></a></h3>
 
+            <!-- Sezione filtri -->
             <div class="sidebar-sections">
+                <p class="item-content">Filtri</p>
                 <div class="sidebar-item">
-                    <p class="item-content">La derivata è il limite del rapporto incrementale...</p>
+                    <!-- Filtro per materia -->
+                    <select name="materia" id="materia" class="filter-input" form="filtersForm">
+                        <option value="">Tutte</option>
+                        <?php
+                            // Recupera tutte le materie dal DB per il filtro
+                            $stmt_m = $conn->prepare("SELECT * FROM Materia");
+                            $stmt_m->execute();
+                            $result = $stmt_m->get_result();
+                            while($row = $result->fetch_assoc()) {
+                                $selected = ($_GET['materia'] ?? '') == $row['ID'] ? "selected" : "";
+                                echo "<option value='{$row['ID']}' $selected>" . htmlspecialchars($row['Nome']) . "</option>";
+                            }
+                        ?>
+                    </select>
+
+                    <!-- Filtro per autore -->
+                    <input type="text" name="autore" id="autore" class="filter-input" placeholder="Autore" value="<?= htmlspecialchars($_GET['autore'] ?? '') ?>" form="filtersForm">
                 </div>
+
+                <!-- Filtro per date -->
                 <div class="sidebar-item">
-                    <p class="item-content">Pioniere del naturalismo letterario...</p>
+                    <label class="item-content">From Date (create)</label>
+                    <input type="text" id="from_date" name="from_date" class="filter-input" value="<?= $_GET['from_date'] ?? '' ?>" form="filtersForm" placeholder="Select Date...">
+
+                    <label class="item-content">To Date</label>
+                    <input type="text" id="to_date" name="to_date" class="filter-input" value="<?= $_GET['to_date'] ?? '' ?>" form="filtersForm" placeholder="Select Date...">
                 </div>
+
+                <!-- Filtro per ordinamento -->
+                <p class="item-content">Order</p>
+                <div class="sidebar-item">
+                    <select name="sort_by" class="filter-input" form="filtersForm">
+                        <option value="date" <?= ($_GET['sort_by'] ?? '') == 'date' ? 'selected' : '' ?>>Date</option>
+                        <option value="title" <?= ($_GET['sort_by'] ?? '') == 'title' ? 'selected' : '' ?>>Title</option>
+                    </select>
+                    <select name="order" class="filter-input" form="filtersForm">
+                        <option value="asc" <?= ($_GET['order'] ?? '') == 'asc' ? 'selected' : '' ?>>ASC</option>
+                        <option value="desc" <?= ($_GET['order'] ?? '') == 'desc' ? 'selected' : '' ?>>DESC</option>
+                    </select>
+                </div>
+
+                <!-- Form per applicare i filtri -->
+                <form method="GET" id="filtersForm">
+                    <button type="submit" class="filter-button">Applica</button>
+                </form>
             </div>
 
+            <!-- Logout -->
             <div class="logout-container">
                 <a href="logout.php" class="logout-link">
                     <img src="../images/logout.png" alt="Logout" class="logout-icon">
@@ -74,50 +130,110 @@
             </div>
         </div>
 
-        <!-- Navbar con barra di ricerca -->
+        <!-- Barra di ricerca -->
         <div class="navbar">
             <form method="GET" action="">
                 <input type="text" name="search" class="search-bar" placeholder="Cerca..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
             </form>
         </div>
 
-        <!-- Container note -->
+        <!-- Contenuto principale -->
         <div class="container">
             <?php
+                // Recupero parametri dai filtri e ricerca
                 $searchTerm = $_GET['search'] ?? '';
+                $materia = $_GET['materia'] ?? '';
+                $autore = $_GET['autore'] ?? '';
+                $from_date = $_GET['from_date'] ?? '';
+                $to_date = $_GET['to_date'] ?? '';
+                $sort_by = $_GET['sort_by'] ?? 'date';
+                $order = $_GET['order'] ?? 'desc';
 
+                // Query base per ottenere le note
+                $query = "
+                    SELECT N.*, U.Username, M.Nome AS MateriaNome 
+                    FROM Notes N
+                    JOIN Users U ON N.User_id = U.ID
+                    JOIN Materia M ON N.Materia_ID = M.ID
+                    WHERE N.User_id = ?
+                ";
+
+                // Parametri per bind_param
+                $params = [$user_id];
+                $types = "i";
+
+                // Aggiunta dei filtri alla query
                 if (!empty($searchTerm)) {
-                    $stmt = $conn->prepare("SELECT * FROM Notes WHERE Title LIKE CONCAT('%', ?, '%') OR Content LIKE CONCAT('%', ?, '%')");
-                    $stmt->bind_param("ss", $searchTerm, $searchTerm);
-                } else {
-                    $stmt = $conn->prepare("SELECT * FROM Notes");
+                    $query .= " AND (N.Title LIKE CONCAT('%', ?, '%') OR N.Content LIKE CONCAT('%', ?, '%'))";
+                    $params[] = $searchTerm;
+                    $params[] = $searchTerm;
+                    $types .= "ss";
                 }
-
+                if (!empty($materia)) {
+                    $query .= " AND Materia_ID = ?";
+                    $params[] = $materia;
+                    $types .= "i";
+                }
+                if (!empty($autore)) {
+                    $query .= " AND U.Username LIKE CONCAT('%', ?, '%')";
+                    $params[] = $autore;
+                    $types .= "s";
+                }
+                if (!empty($from_date)) {
+                    $query .= " AND N.Created_at >= ?";
+                    $params[] = $from_date;
+                    $types .= "s";
+                }
+                if (!empty($to_date)) {
+                    $query .= " AND N.Created_at <= ?";
+                    $params[] = $to_date;
+                    $types .= "s";
+                }
+                // Ordinamento dei risultati
+                $order_by_column = $sort_by === 'title' ? 'N.Title' : 'N.Updated_at';
+                $order_dir = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
+                $query .= " ORDER BY $order_by_column $order_dir";
+                // Preparazione e esecuzione della query
+                $stmt = $conn->prepare($query);
+                if (!empty($params)) {
+                    $stmt->bind_param($types, ...$params);
+                }
                 $stmt->execute();
                 $result = $stmt->get_result();
-
+                // Visualizzazione dei risultati
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         echo "
                             <div class='card'>
-                                <h2 class='card-title'>{$row['Title']}</h2>
+                                <h2 class='card-title'>" . htmlspecialchars($row['Title']) . "</h2>
                                 <div class='card-content-wrapper'>
-                                    <p class='card-content'>{$row['Content']}</p>
+                                    <p class='card-content'>" . nl2br($row['Content']) . "</p>
                                 </div>
                                 <a href='noteDetail.php?id={$row['ID']}' class='read-more'> More </a>
                             </div>
                         ";
                     }
-                } else {
-                    echo "<p>Nessuna nota trovata.</p>";
                 }
             ?>
         </div>
-
-        <!-- Pulsante per aggiungere nota -->
+        <!-- Pulsante per aggiungere una nuova nota -->
         <div class="btn">
             <button class="floating-button" onclick="location.href='addNote.php'">+</button>
         </div>
     </div>
+    <!-- Inizializzazione di Flatpickr per i campi data -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
+    <script>
+        flatpickr("#from_date", {
+            dateFormat: "Y-m-d",
+            locale: "it"
+        });
+
+        flatpickr("#to_date", {
+            dateFormat: "Y-m-d",
+            locale: "it"
+        });
+    </script>
 </body>
 </html>

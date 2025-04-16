@@ -4,7 +4,7 @@
 
     if (isset($_SESSION['flash_message'])) {
         echo "<script>alert('{$_SESSION['flash_message']}');</script>";
-        unset($_SESSION['flash_message']); // 🔥 SVUOTA il messaggio
+        unset($_SESSION['flash_message']); //Svuota il messaggio
     }
 
     $user_id = $_SESSION['user_id'];
@@ -15,7 +15,6 @@
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="it">
