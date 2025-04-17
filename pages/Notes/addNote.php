@@ -1,5 +1,5 @@
 <?php
-    include "../includes/db.php";
+    include "../../includes/db.php";
     session_start();
 
     $stmt = $conn->prepare("SELECT * FROM Materia");
@@ -10,7 +10,7 @@
 <html lang="it">
 <head>
     <!--Link CSS-->
-    <link rel="stylesheet" href="../css/notes.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../../css/notes.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,26 +25,28 @@
 <body>
     <div class="container">
         <div class="header">
-            <button class="floating-button" onclick="location.href='home.php'">Home</button>
+            <button class="floating-button" onclick="location.href='../home.php'">Home</button>
             <h1>Adding Note</h1>
         </div>
 
         <form action="save_note.php" method="post">
             <div class="form-group">
-                <input type="text" name="title" placeholder="Titolo..." required>
-                <select name="materia" id="materia">
-                    <?php
-                        while($row = $result->fetch_assoc()) {
-                            echo "<option value='{$row['ID']}'> {$row['Nome']} </option>";
-                        }
-                    ?>
-                </select>
+                <input type="text" name="title" id="title" placeholder="Titolo..." required>
+                <div class="container-materia">
+                    <select name="materia" id="materia">
+                        <?php
+                            while($row = $result->fetch_assoc()) {
+                                echo "<option value='{$row['ID']}'> {$row['Nome']} </option>";
+                            }
+                        ?>
+                    </select>
+                </div>
             </div>
             <div class="editor-container">
                 <textarea id="editor" name="content" placeholder="Scrivi la tua nota..." ></textarea>
             </div>
             <div class="form-group">
-                <input type="text" name="tags" placeholder="Aggiungi tag (#tag1 #tag2)" class="tags-input">
+                <input type="text" name="argomento" placeholder="Argomento..." class="tags-input">
                 <div class="btn">
                     <button type="submit"> Save </button>
                 </div>

@@ -28,7 +28,7 @@
 
             <div class="links">
                 <a href="pages/forgot-password.php">Password dimenticata?</a>
-                <a href="pages/signup.php">Registrati</a>
+                <a href="pages/SignUp/signup.php">Registrati</a>
             </div>
         </form>
     </div>

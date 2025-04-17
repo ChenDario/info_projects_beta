@@ -1,5 +1,5 @@
 <?php
-    include "../includes/db.php";
+    include "../../includes/db.php";
     session_start();
 
     // Verifica che l'utente sia loggato
@@ -22,15 +22,14 @@
 <html lang="en">
 <head>
     <!--Link CSS-->
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../../css/login.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit</title>
 </head>
 <body>
-    
     <div class="container">
-        <form action="edit.php" method="post">
+        <form action="edit_info.php" method="post">
             <label for="">Nome</label>
             <input type="text" placeholder="Nome..." name="nome" value="<?=$user['Nome']?>">
             

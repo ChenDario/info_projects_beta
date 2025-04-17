@@ -2,6 +2,12 @@
     include "../includes/db.php";
     session_start();
 
+    $popup_message = "";
+    if (isset($_SESSION['popup_message'])) {
+        $popup_message = $_SESSION['popup_message'];
+        unset($_SESSION['popup_message']); // Rimuove il messaggio dopo averlo mostrato
+    }
+
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'], $_POST['password'])) {
         // Rimozione degli spazi bianchi dai dati ricevuti
         $username = trim($_POST['username']);
@@ -61,6 +67,15 @@
     <title>Home</title>
 </head>
 <body>
+    <!-- Messaggio di Errore per l'inserimento della nota-->
+    <?php if (!empty($popup_message)) : ?>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            alert("<?= addslashes($popup_message) ?>");
+        });
+    </script>
+    <?php endif; ?>
+
     <div>
         <!-- Sidebar laterale -->
         <div class="sidebar">
@@ -69,7 +84,7 @@
                 <?php echo strtoupper(substr($userData['Username'], 0, 1)); ?>
             </div>
             <!-- Link al profilo -->
-            <h3 class="username"><a href="profile.php"><?= htmlspecialchars($userData['Username']) ?></a></h3>
+            <h3 class="username"><a href="Profile/profile.php"><?= htmlspecialchars($userData['Username']) ?></a></h3>
 
             <!-- Sezione filtri -->
             <div class="sidebar-sections">
@@ -91,7 +106,7 @@
                     </select>
 
                     <!-- Filtro per autore -->
-                    <input type="text" name="autore" id="autore" class="filter-input" placeholder="Autore" value="<?= htmlspecialchars($_GET['autore'] ?? '') ?>" form="filtersForm">
+                    <input type="text" name="autore" id="autore" class="filter-input" placeholder="Autore..." value="<?= htmlspecialchars($_GET['autore'] ?? '') ?>" form="filtersForm">
                 </div>
 
                 <!-- Filtro per date -->
@@ -151,24 +166,31 @@
 
                 // Query base per ottenere le note
                 $query = "
-                    SELECT N.*, U.Username, M.Nome AS MateriaNome 
+                    SELECT DISTINCT N.*, U.Username, M.Nome AS MateriaNome 
                     FROM Notes N
-                    JOIN Users U ON N.User_id = U.ID
-                    JOIN Materia M ON N.Materia_ID = M.ID
-                    WHERE N.User_id = ?
+                    INNER JOIN Users U ON N.User_id = U.ID
+                    INNER JOIN Materia M ON N.Materia_ID = M.ID
+                    LEFT JOIN appunti_argomento AA ON N.ID = AA.IDNote
+                    LEFT JOIN Argomento A ON AA.IDArgomento = A.ID
+                    WHERE 1=1
                 ";
 
                 // Parametri per bind_param
-                $params = [$user_id];
-                $types = "i";
+                $params = [];
+                $types = "";
 
                 // Aggiunta dei filtri alla query
                 if (!empty($searchTerm)) {
-                    $query .= " AND (N.Title LIKE CONCAT('%', ?, '%') OR N.Content LIKE CONCAT('%', ?, '%'))";
+                    $query .= " AND (
+                        N.Title LIKE CONCAT('%', ?, '%')
+                        OR N.Content LIKE CONCAT('%', ?, '%')
+                        OR A.Nome LIKE CONCAT('%', ?, '%')
+                    )";
                     $params[] = $searchTerm;
                     $params[] = $searchTerm;
-                    $types .= "ss";
-                }
+                    $params[] = $searchTerm;
+                    $types .= "sss";
+                }                
                 if (!empty($materia)) {
                     $query .= " AND Materia_ID = ?";
                     $params[] = $materia;
@@ -209,16 +231,24 @@
                                 <div class='card-content-wrapper'>
                                     <p class='card-content'>" . nl2br($row['Content']) . "</p>
                                 </div>
-                                <a href='noteDetail.php?id={$row['ID']}' class='read-more'> More </a>
-                            </div>
+                                <div class='note-actions'>
+                                    <a href='Notes/noteDetail.php?id={$row['ID']}' class='read-more'>More</a>
                         ";
+                        // Controlla se l'utente loggato è l'autore della nota
+                        if ($row['User_id'] == $user_id) {
+                            echo "
+                                <a href='Notes/editNote.php?id={$row['ID']}' class='read-more'>Edit</a>
+                                <a href='Notes/deleteNote.php?id={$row['ID']}' class='read-more' onclick='return confirm(\"Sei sicuro di voler cancellare questa nota?\")'>Delete</a>
+                            ";
+                        }
+                        echo "</div></div>";
                     }
                 }
             ?>
         </div>
         <!-- Pulsante per aggiungere una nuova nota -->
         <div class="btn">
-            <button class="floating-button" onclick="location.href='addNote.php'">+</button>
+            <button class="floating-button" onclick="location.href='Notes/addNote.php'">+</button>
         </div>
     </div>
     <!-- Inizializzazione di Flatpickr per i campi data -->

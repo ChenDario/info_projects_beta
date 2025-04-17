@@ -29,7 +29,7 @@ INSERT INTO materia (Nome) VALUES
 ("Inglese"),
 ("Scienze Motorie"),
 ("Sistemi e Reti"), 
-("Religione")
+("Religione");
 
 CREATE TABLE Argomento(
     ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,

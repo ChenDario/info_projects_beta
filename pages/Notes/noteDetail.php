@@ -1,9 +1,9 @@
 <?php
-    include "../includes/db.php";
+    include "../../includes/db.php";
     session_start();
 
     if (!isset($_SESSION['user_id'])) {
-        header("Location: ../index.php");
+        header("Location: ../../index.php");
         exit();
     }
 
@@ -45,7 +45,7 @@
 <html lang="en">
 <head>
     <!--Link CSS-->
-    <link rel="stylesheet" href="../css/noteDetail.css">
+    <link rel="stylesheet" href="../../css/noteDetail.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Note Detail </title>
@@ -53,7 +53,7 @@
 <body>
     <div class="container">
         <div class="btn">
-            <button class="floating-button" onclick="location.href='home.php'">Home</button>
+            <button class="floating-button" onclick="location.href='../home.php'">Home</button>
         </div>
 
         <h1><?php echo $note_title; ?></h1>
