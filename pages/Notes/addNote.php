@@ -9,18 +9,23 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <!--Link CSS-->
-    <link rel="stylesheet" href="../../css/notes.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Note</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../../css/notes.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+
+    <!-- JS Editor -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/display/placeholder.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/selection/active-line.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closetag.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -29,7 +34,7 @@
             <h1>Adding Note</h1>
         </div>
 
-        <form action="save_note.php" method="post">
+        <form action="save_note.php" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <input type="text" name="title" id="title" placeholder="Titolo..." required>
                 <div class="container-materia">
@@ -43,27 +48,27 @@
                 </div>
             </div>
             <div class="editor-container">
-                <textarea id="editor" name="content" placeholder="Scrivi la tua nota..." ></textarea>
+                <textarea id="editor" name="content" placeholder="Scrivi la tua nota..."></textarea>
             </div>
             <div class="form-group">
                 <input type="text" name="argomento" placeholder="Argomento..." class="tags-input">
+                <input type="file" id="file_upload" name="file_upload[]" multiple accept=".pdf,.doc,.docx,.txt,image/*" style="margin-left: 10px;">
                 <div class="btn">
                     <button type="submit"> Save </button>
                 </div>
             </div>
+            <div id="file-preview" class="file-preview"></div>
         </form>
     </div>
-    <script>
-        var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
-            mode: "text/x-php",
-            lineNumbers: true,
-            styleActiveLine: true,
-            matchBrackets: true,
-            autoCloseTags: true,
-            placeholder: "Scrivi la tua nota...",
-            theme: "default"
-        });
-        editor.setSize("100%", "100%");
-    </script>
+
+    <!-- Modal Viewer -->
+    <div id="modal-viewer" class="modal-viewer" style="display:none;" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation();">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="../../js/Anteprimafile.js"></script>
 </body>
 </html>
