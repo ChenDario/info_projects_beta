@@ -32,6 +32,7 @@
 
             // Salvataggio dell'ID utente nella sessione
             $_SESSION['user_id'] = $user['ID'];
+            $_SESSION['username'] = $user['Username'];
         } else {
             // Username non trovato
             $_SESSION['message'] = "Username errato";

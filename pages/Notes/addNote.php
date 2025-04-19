@@ -13,8 +13,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Note</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="../../css/notes.css?v=<?php echo time(); ?>">
+    <!--Link CSS General Structure -->
+    <link rel="stylesheet" href="../../css/notes.css">
+    <!--Link CSS File Visualization -->
+    <link rel="stylesheet" href="../../css/fileVisualization.css">
+    <!--Link CSS CodeMirror -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
 
     <!-- JS Editor -->
@@ -52,7 +55,10 @@
             </div>
             <div class="form-group">
                 <input type="text" name="argomento" placeholder="Argomento..." class="tags-input">
-                <input type="file" id="file_upload" name="file_upload[]" multiple accept=".pdf,.doc,.docx,.txt,image/*" style="margin-left: 10px;">
+                
+                <input type="file" id="file_upload" name="file_upload[]" multiple accept=".pdf,.doc,.docx,.txt,image/*" hidden>
+                <label for="file_upload" class="custom-file-upload">Seleziona file</label>
+
                 <div class="btn">
                     <button type="submit"> Save </button>
                 </div>
@@ -69,6 +75,9 @@
         </div>
     </div>
 
+    <!-- Script CodeMirror (textarea) -->
+    <script src="../../js/CodeMirror.js"></script>
+    <!-- Script File Anteprima -->
     <script src="../../js/Anteprimafile.js"></script>
 </body>
 </html>

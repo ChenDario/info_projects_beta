@@ -4,7 +4,7 @@
 
     // Verifica che l'utente sia loggato
     if (!isset($_SESSION['username'])) {
-        header("Location: ../index.php");
+        header("Location: ../../index.php");
         exit();
     }
 
@@ -22,7 +22,7 @@
 <html lang="en">
 <head>
     <!--Link CSS-->
-    <link rel="stylesheet" href="../../css/login.css">
+    <link rel="stylesheet" href="../../css/form.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit</title>

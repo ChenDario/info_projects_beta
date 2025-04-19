@@ -19,7 +19,7 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <!--Link CSS-->
+    <!--Link CSS General Structure-->
     <link rel="stylesheet" href="../../css/profile.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,9 +65,9 @@
         </div>
 
         <div>
-            <button class="edit-button" onclick="location.href='edit_data.php'">
+            <button class="edit-button" onclick="location.href='./edit_data.php'">
                 <img src="../../images/edit.png" alt="Edit Icon" class="edit-icon">
-                Modifica Dati
+                Edit Data
             </button>
         </div>
 
