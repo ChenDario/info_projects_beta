@@ -1,0 +1,82 @@
+/* Contenitore principale delle note */
+.container {
+    margin-top: 80px;
+    margin-left: 260px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Spaziatura tra le note */
+}
+
+/* Card (contenitore per ciascuna nota) */
+.card {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    padding: 20px 20px;
+    border: 1px solid #2f2f2f;
+    transition: transform 0.2s ease, border 0.2s ease;
+    width: 80%; /* Larghezza del 80% della finestra */
+}
+
+.card:hover {
+    transform: translateY(-3px); /* Leggera traslazione al passaggio del mouse */
+    border: 1px solid #4CAF50; /* Cambia il bordo a verde */
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-content-wrapper {
+    max-height: 60px;
+    overflow: hidden; /* Nasconde il testo che esce dai limiti */
+}
+
+.card-content {
+    font-size: 14px;
+    color: #ccc; /* Colore chiaro per il contenuto */
+}
+
+.read-more {
+    color: #4CAF50; /* Colore verde per il link */
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.read-more:hover {
+    text-decoration: underline; /* Sottolinea il link al passaggio del mouse */
+}
+
+.note-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 15px; /* Spaziatura tra i link */
+    flex-wrap: wrap; /* Se vuoi che vadano a capo su schermi piccoli */
+}
+
+/* Bottone fluttuante per aggiungere note */
+.btn {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+}
+
+.floating-button {
+    width: 50px;
+    height: 50px;
+    background-color: #4CAF50; /* Colore verde per il bottone */
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+.floating-button:hover {
+    background-color: #45a049; /* Cambia il colore al passaggio del mouse */
+}

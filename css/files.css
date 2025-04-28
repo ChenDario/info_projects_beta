@@ -1,0 +1,19 @@
+/* Contenitore principale delle note */
+.container {
+    margin-top: 80px;
+    margin-left: 260px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Spaziatura tra le note */
+}
+
+.file-preview {
+    justify-content: center !important; /* Centra i file orizzontalmente */
+    align-items: center !important; /* Centra i file verticalmente */
+}
+
+.file-container {
+    align-items: center !important; /* Centra il contenuto all'interno del file */
+}

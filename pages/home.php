@@ -59,7 +59,10 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <!-- CSS For General Structure -->
     <link rel="stylesheet" href="../css/home.css">
+    <!-- CSS Notes Visualization -->
+    <link rel="stylesheet" href="../css/noteVisual.css">
     <!-- Framework Flatpickr per le date-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -105,9 +108,12 @@
                             }
                         ?>
                     </select>
-
                     <!-- Filtro per autore -->
                     <input type="text" name="autore" id="autore" class="filter-input" placeholder="Autore..." value="<?= htmlspecialchars($_GET['autore'] ?? '') ?>" form="filtersForm">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" name="onlyFile" id="files" onchange="handleFileCheckbox(this)">
+                        <label for="files">Only show file/s</label>
+                    </div>
                 </div>
 
                 <!-- Filtro per date -->
@@ -255,16 +261,14 @@
     <!-- Inizializzazione di Flatpickr per i campi data -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
+    <script src="../js/Flatpickr.js"></script>
     <script>
-        flatpickr("#from_date", {
-            dateFormat: "Y-m-d",
-            locale: "it"
-        });
-
-        flatpickr("#to_date", {
-            dateFormat: "Y-m-d",
-            locale: "it"
-        });
+        function handleFileCheckbox(checkbox) {
+            if (checkbox.checked) {
+                // Reindirizza alla pagina desiderata
+                window.location.href = 'Files/fileOnlyView.php';
+            }
+        }
     </script>
 </body>
 </html>

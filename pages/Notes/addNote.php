@@ -64,15 +64,14 @@
                 </div>
             </div>
             <div id="file-preview" class="file-preview"></div>
+            <!-- Modal Viewer -->
+            <div id="modal-viewer" class="modal-viewer" style="display:none;" onclick="closeModal()">
+                <div class="modal-content" onclick="event.stopPropagation();">
+                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                    <div id="modal-body"></div>
+                </div>
+            </div>
         </form>
-    </div>
-
-    <!-- Modal Viewer -->
-    <div id="modal-viewer" class="modal-viewer" style="display:none;" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation();">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div id="modal-body"></div>
-        </div>
     </div>
 
     <!-- Script CodeMirror (textarea) -->
