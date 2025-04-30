@@ -63,7 +63,7 @@
                     
                     <div class="checkbox-wrapper">
                         <input type="checkbox" name="onlyFile" id="files" onchange="handleFileCheckbox(this)">
-                        <label for="files">Only show file/s</label>
+                        <label for="files">Show All</label>
                     </div>
                 </div>
 
@@ -224,7 +224,7 @@
     <script>
         function handleFileCheckbox(checkbox) {
             if (checkbox.checked) {
-                window.location.href = 'Files/fileOnlyView.php';
+                window.location.href = '../home.php';
             }
         }
     </script>
