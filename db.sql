@@ -1,7 +1,7 @@
 DROP DATABASE IF EXISTS Progetto_Chen;
 CREATE DATABASE Progetto_Chen;
 USE Progetto_Chen;
--- Aggiungere due date, quella di creazione e quella dell'ultimo aggiornamento del profilo
+
 CREATE TABLE Users (
     ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     Nome VARCHAR(50) NOT NULL,
