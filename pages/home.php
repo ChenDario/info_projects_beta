@@ -33,6 +33,7 @@
             // Salvataggio dell'ID utente nella sessione
             $_SESSION['user_id'] = $user['ID'];
             $_SESSION['username'] = $user['Username'];
+            $_SESSION['user_type'] = $user['Tipo']; 
         } else {
             // Username non trovato
             $_SESSION['message'] = "Username errato";
@@ -49,11 +50,12 @@
 
     // Recupero dei dati dell'utente loggato
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT Username FROM Users WHERE ID = ?");
+    $stmt = $conn->prepare("SELECT Username, Tipo FROM Users WHERE ID = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $userData = $result->fetch_assoc();
+    $user_type = $userData['Tipo'];
 ?>
 
 <!DOCTYPE html>
@@ -242,7 +244,7 @@
                                     <a href='Notes/noteDetail.php?id={$row['ID']}' class='read-more'>More</a>
                         ";
                         // Controlla se l'utente loggato è l'autore della nota
-                        if ($row['User_id'] == $user_id) {
+                        if ($row['User_id'] == $user_id || $user_type === 'admin') {
                             echo "
                                 <a href='Notes/editNote.php?id={$row['ID']}' class='read-more'>Edit</a>
                                 <a href='Notes/deleteNote.php?id={$row['ID']}' class='read-more' onclick='return confirm(\"Sei sicuro di voler cancellare questa nota?\")'>Delete</a>

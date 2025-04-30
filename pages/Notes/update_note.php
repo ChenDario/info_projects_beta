@@ -21,11 +21,9 @@
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            // Argomento già esistente
             $row = $result->fetch_assoc();
             $id_argomento = $row['ID'];
         } else {
-            // Argomento non esiste, quindi lo creiamo
             $stmt_insert_arg = $conn->prepare("INSERT INTO Argomento (Nome) VALUES (?)");
             $stmt_insert_arg->bind_param("s", $argomento);
             if ($stmt_insert_arg->execute()) {
@@ -38,42 +36,72 @@
             $stmt_insert_arg->close();
         }
 
-        // 2. Inserisci la nota
+        // 2. Aggiorna la nota
         $stmt = $conn->prepare("UPDATE Notes SET Title = ?, Materia_ID = ?, Content = ? WHERE ID = ?");
         $stmt->bind_param("sisi", $title, $materia_id, $content, $note_id);
 
         if ($stmt->execute()) {
-            // 3. Controlla se esiste già l'associazione(evito duplicati)
+            // 3. Associa l'argomento se non è già associato
             $stmt_check_assoc = $conn->prepare("SELECT 1 FROM appunti_argomento WHERE IDNote = ? AND IDArgomento = ?");
             $stmt_check_assoc->bind_param("ii", $note_id, $id_argomento);
             $stmt_check_assoc->execute();
             $assoc_result = $stmt_check_assoc->get_result();
 
             if ($assoc_result->num_rows === 0) {
-                // Se non esiste, la inseriamo
                 $stmt_associa = $conn->prepare("INSERT INTO appunti_argomento (IDNote, IDArgomento) VALUES (?, ?)");
                 $stmt_associa->bind_param("ii", $note_id, $id_argomento);
-
                 if (!$stmt_associa->execute()) {
                     $_SESSION['popup_message'] = "Nota salvata, ma errore nell'associare l'argomento.";
                 } else {
-                    $_SESSION['popup_message'] = "Note Update SUCCESSFUL!";
+                    $_SESSION['popup_message'] = "Nota aggiornata con successo!";
                 }
-
                 $stmt_associa->close();
             } else {
-                $_SESSION['popup_message'] = "Note Update SUCCESSFUL!";
+                $_SESSION['popup_message'] = "Nota aggiornata con successo!";
             }
 
             $stmt_check_assoc->close();
-
         } else {
-            $_SESSION['popup_message'] = "ERROR IN THE NOTE UPDATE";
+            $_SESSION['popup_message'] = "Errore nell'aggiornamento della nota.";
         }
 
         $stmt->close();
-        
-        // Reindirizzamento finale
+
+        // 4. Gestione upload nuovi file
+        if (!empty($_FILES['file_upload']['name'][0])) {
+            $upload_dir = '../../uploads/';
+            $user_id = $_SESSION['user_id']; // assicurati che l'utente sia loggato
+
+            foreach ($_FILES['file_upload']['name'] as $index => $original_name) {
+                $tmp_name = $_FILES['file_upload']['tmp_name'][$index];
+                $mime_type = $_FILES['file_upload']['type'][$index];
+                $file_size = $_FILES['file_upload']['size'][$index];
+
+                if ($file_size > 0) {
+                    $stored_name = uniqid() . "_" . basename($original_name);
+                    $destination = $upload_dir . $stored_name;
+
+                    // Evita duplicati per nome file e nota
+                    $check_file = $conn->prepare("SELECT 1 FROM Files WHERE Note_id = ? AND Original_filename = ?");
+                    $check_file->bind_param("is", $note_id, $original_name);
+                    $check_file->execute();
+                    $result = $check_file->get_result();
+
+                    if ($result->num_rows === 0) {
+                        if (move_uploaded_file($tmp_name, $destination)) {
+                            $stmt_insert_file = $conn->prepare("INSERT INTO Files (Note_id, User_id, Original_filename, Stored_filename, Mime_type, File_size) VALUES (?, ?, ?, ?, ?, ?)");
+                            $stmt_insert_file->bind_param("iisssi", $note_id, $user_id, $original_name, $stored_name, $mime_type, $file_size);
+                            $stmt_insert_file->execute();
+                            $stmt_insert_file->close();
+                        }
+                    }
+
+                    $check_file->close();
+                }
+            }
+        }
+
+        // 5. Reindirizzamento finale
         header("Location: ../home.php");
         exit();
     }

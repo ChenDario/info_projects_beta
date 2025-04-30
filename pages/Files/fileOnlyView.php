@@ -7,13 +7,14 @@
         exit();
     }
 
-    // Recupero dati utente
+    // Recupero dati utente (incluso il tipo)
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT Username FROM Users WHERE ID = ?");
+    $stmt = $conn->prepare("SELECT Username, Tipo FROM Users WHERE ID = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $userData = $result->fetch_assoc();
+    $user_type = $userData['Tipo'];
 ?>
 
 <!DOCTYPE html>
@@ -179,29 +180,38 @@
 
             if (!empty($files)): ?>
                 <h2>Files</h2>
-                <div id="file-preview" class="file-preview">
-                    <?php foreach ($files as $file):
-                        $filePath = "../../uploads/" . $file['Stored_filename'];
-                        $fileName = htmlspecialchars($file['Original_filename']);
-                        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-                        $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif']);
-                        $isPDF = strtolower($ext) === 'pdf';
-                        $isTxt = strtolower($ext) === 'txt';
-                    ?>
-                    <div class="file-container">
-                        <?php if ($isImage): ?>
-                            <img class="preview-image" src="<?php echo $filePath; ?>" onclick="openModal('<?php echo $filePath; ?>', 'image')">
-                        <?php elseif ($isPDF): ?>
-                            <p><?php echo $fileName; ?></p>
-                            <canvas class="pdf-preview" data-pdf="<?php echo $filePath; ?>"></canvas>
-                        <?php elseif ($isTxt): ?>
-                            <div class="file-icon" onclick="openText('<?php echo $filePath; ?>')"><?php echo $fileName; ?></div>
-                        <?php else: ?>
-                            <div class="file-icon"><?php echo $fileName; ?></div>
-                        <?php endif; ?>
+                <form method="POST" action="delete_files.php" onsubmit="return confirm('Sei sicuro di voler eliminare i file selezionati?');">
+                    <div class="file-actions">
+                        <button type="submit" class="delete-button">Elimina selezionati</button>
                     </div>
-                    <?php endforeach; ?>
-                </div>
+                    <div id="file-preview" class="file-preview">
+                        <?php foreach ($files as $file):
+                            $filePath = "../../uploads/" . $file['Stored_filename'];
+                            $fileName = htmlspecialchars($file['Original_filename']);
+                            $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                            $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif']);
+                            $isPDF = strtolower($ext) === 'pdf';
+                            $isTxt = strtolower($ext) === 'txt';
+                        ?>
+                        <div class="file-container">
+                            <?php if ($isImage): ?>
+                                <img class="preview-image" src="<?= $filePath ?>" onclick="openModal('<?= $filePath ?>', 'image')">
+                            <?php elseif ($isPDF): ?>
+                                <p><?= $fileName ?></p>
+                                <canvas class="pdf-preview" data-pdf="<?= $filePath ?>"></canvas>
+                            <?php elseif ($isTxt): ?>
+                                <div class="file-icon" onclick="openText('<?= $filePath ?>')"><?= $fileName ?></div>
+                            <?php else: ?>
+                                <div class="file-icon"><?= $fileName ?></div>
+                            <?php endif; ?>
+                            <!-- Mostra checkbox se l'utente è l'autore del file o è admin -->
+                            <?php if ($file['User_id'] == $user_id || $user_type === 'admin'): ?>
+                                <input type="checkbox" name="file_ids[]" value="<?= $file['ID'] ?>">
+                            <?php endif; ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </form>
             <?php endif; ?>
 
             <!-- Modal -->

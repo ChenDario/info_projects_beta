@@ -60,7 +60,7 @@
             <h1>Edit Note</h1>
         </div>
 
-        <form action="update_note.php" method="post">
+        <form action="update_note.php" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <input type="hidden" name="note_id" value="<?= $note_id ?>">
 
@@ -85,7 +85,7 @@
             </div>
 
             <div class="form-group">
-                <input type="text" name="argomento" placeholder="Argomento..." class="tags-input">
+                <input type="text" name="argomento" placeholder="Argomento..." class="tags-input" value="<?=$row['Argomento']?>">
                 
                 <input type="file" id="file_upload" name="file_upload[]" multiple accept=".pdf,.doc,.docx,.txt,image/*" hidden>
                 <label for="file_upload" class="custom-file-upload">Seleziona file</label>
@@ -94,32 +94,35 @@
                     <button type="submit"> Save </button>
                 </div>
             </div>
-            <?php if (!empty($files)): ?>
-                <h3>Allegati Presenti</h3>
-                <div id="file-preview" class="file-preview">
-                    <?php foreach ($files as $file): 
-                        $filePath = "../../uploads/" . $file['Stored_filename'];
-                        $fileName = htmlspecialchars($file['Original_filename']);
-                        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-                        $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif']);
-                        $isPDF = strtolower($ext) === 'pdf';
-                        $isTxt = strtolower($ext) === 'txt';
-                    ?>
-                        <div class="file-container">
-                            <?php if ($isImage): ?>
-                                <img class="preview-image" src="<?php echo $filePath; ?>" onclick="openModal('<?php echo $filePath; ?>', 'image')">
-                            <?php elseif ($isPDF): ?>
-                                <p><?php echo $fileName; ?></p>
-                                <canvas class="pdf-preview" data-pdf="<?php echo $filePath; ?>"></canvas>
-                            <?php elseif ($isTxt): ?>
-                                <div class="file-icon" onclick="openText('<?php echo $filePath; ?>')"><?php echo $fileName; ?></div>
-                            <?php else: ?>
-                                <div class="file-icon"><?php echo $fileName; ?></div>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            <div>
+                <?php if (!empty($files)): ?>
+                    <h3>Allegati Presenti</h3>
+                    <div id="file-preview" class="file-preview">
+                        <?php foreach ($files as $file): 
+                            $filePath = "../../uploads/" . $file['Stored_filename'];
+                            $fileName = htmlspecialchars($file['Original_filename']);
+                            $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                            $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif']);
+                            $isPDF = strtolower($ext) === 'pdf';
+                            $isTxt = strtolower($ext) === 'txt';
+                        ?>
+                            <div class="file-container">
+                                <?php if ($isImage): ?>
+                                    <img class="preview-image" src="<?php echo $filePath; ?>" onclick="openModal('<?php echo $filePath; ?>', 'image')">
+                                <?php elseif ($isPDF): ?>
+                                    <p><?php echo $fileName; ?></p>
+                                    <canvas class="pdf-preview" data-pdf="<?php echo $filePath; ?>"></canvas>
+                                <?php elseif ($isTxt): ?>
+                                    <div class="file-icon" onclick="openText('<?php echo $filePath; ?>')"><?php echo $fileName; ?></div>
+                                <?php else: ?>
+                                    <div class="file-icon"><?php echo $fileName; ?></div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                <div id="new-file-preview" class="file-preview"></div>
+            </div>
             <!-- Modal -->
             <div id="modal-viewer" class="modal-viewer" style="display:none;" onclick="closeModal()">
                 <div class="modal-content" onclick="event.stopPropagation();">
@@ -134,6 +137,6 @@
     <script src="../../js/CodeMirror.js"></script>
     <!-- Script File Anteprima -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script src="../../js/FileVisualization.js"></script>
+    <script src="../../js/NewFiles.js"></script>
 </body>
 </html>
