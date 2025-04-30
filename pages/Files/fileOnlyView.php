@@ -1,20 +1,23 @@
 <?php  
-    include "../../includes/db.php";
-    session_start();
+include "../../includes/db.php";
+session_start();
 
-    if (!isset($_SESSION['user_id'])) {
-        header("Location: ../index.php");
-        exit();
-    }
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../index.php");
+    exit();
+}
 
-    // Recupero dati utente (incluso il tipo)
+// Recupero dati utente
+try {
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT Username, Tipo FROM Users WHERE ID = ?");
-    $stmt->bind_param("i", $user_id);
+    $stmt = $conn->prepare("SELECT Username, Tipo FROM Users WHERE ID = :user_id");
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $userData = $result->fetch_assoc();
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
     $user_type = $userData['Tipo'];
+} catch (PDOException $e) {
+    die("Errore nel recupero dei dati utente: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -23,14 +26,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Files</title>
-
-    <!-- CSS For General Structure -->
+    <!-- CSS -->
     <link rel="stylesheet" href="../../css/home.css">
-    <!-- CSS Files Container -->
     <link rel="stylesheet" href="../../css/files.css">
-    <!--Link CSS File Visualization-->
     <link rel="stylesheet" href="../../css/fileVisualization.css">
-    <!-- Framework Flatpickr per le date-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
@@ -50,17 +49,20 @@
                     <select name="materia" id="materia" class="filter-input" form="filtersForm">
                         <option value="">Tutte</option>
                         <?php
-                        $stmt_m = $conn->prepare("SELECT * FROM Materia");
-                        $stmt_m->execute();
-                        $result_m = $stmt_m->get_result();
-                        while($row = $result_m->fetch_assoc()) {
-                            $selected = ($_GET['materia'] ?? '') == $row['ID'] ? "selected" : "";
-                            echo "<option value='{$row['ID']}' $selected>" . htmlspecialchars($row['Nome']) . "</option>";
+                        try {
+                            $stmt_m = $conn->query("SELECT * FROM Materia");
+                            while($row = $stmt_m->fetch(PDO::FETCH_ASSOC)) {
+                                $selected = ($_GET['materia'] ?? '') == $row['ID'] ? "selected" : "";
+                                echo "<option value='".htmlspecialchars($row['ID'])."' $selected>".htmlspecialchars($row['Nome'])."</option>";
+                            }
+                        } catch (PDOException $e) {
+                            error_log("Errore nel recupero delle materie: " . $e->getMessage());
                         }
                         ?>
                     </select>
 
-                    <input type="text" name="autore" id="autore" class="filter-input" placeholder="Autore..." value="<?= htmlspecialchars($_GET['autore'] ?? '') ?>" form="filtersForm">
+                    <input type="text" name="autore" id="autore" class="filter-input" placeholder="Autore..." 
+                           value="<?= htmlspecialchars($_GET['autore'] ?? '') ?>" form="filtersForm">
                     
                     <div class="checkbox-wrapper">
                         <input type="checkbox" name="onlyFile" id="files" onchange="handleFileCheckbox(this)">
@@ -70,10 +72,12 @@
 
                 <div class="sidebar-item">
                     <label class="item-content">From Date (create)</label>
-                    <input type="text" id="from_date" name="from_date" class="filter-input" value="<?= $_GET['from_date'] ?? '' ?>" form="filtersForm" placeholder="Select Date...">
+                    <input type="text" id="from_date" name="from_date" class="filter-input" 
+                           value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>" form="filtersForm" placeholder="Select Date...">
 
                     <label class="item-content">To Date</label>
-                    <input type="text" id="to_date" name="to_date" class="filter-input" value="<?= $_GET['to_date'] ?? '' ?>" form="filtersForm" placeholder="Select Date...">
+                    <input type="text" id="to_date" name="to_date" class="filter-input" 
+                           value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>" form="filtersForm" placeholder="Select Date...">
                 </div>
 
                 <p class="item-content">Order</p>
@@ -104,115 +108,107 @@
         <!-- Barra di ricerca -->
         <div class="navbar">
             <form method="GET" action="">
-                <input type="text" name="search" class="search-bar" placeholder="Cerca..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                <input type="text" name="search" class="search-bar" placeholder="Cerca..." 
+                       value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
             </form>
         </div>
 
         <!-- Contenuto principale -->
         <div class="container">
             <?php
-            $searchTerm = $_GET['search'] ?? '';
-            $materia = $_GET['materia'] ?? '';
-            $autore = $_GET['autore'] ?? '';
-            $from_date = $_GET['from_date'] ?? '';
-            $to_date = $_GET['to_date'] ?? '';
-            $sort_by = $_GET['sort_by'] ?? 'date';
-            $order = $_GET['order'] ?? 'desc';
+            try {
+                $searchTerm = $_GET['search'] ?? '';
+                $materia = $_GET['materia'] ?? '';
+                $autore = $_GET['autore'] ?? '';
+                $from_date = $_GET['from_date'] ?? '';
+                $to_date = $_GET['to_date'] ?? '';
+                $sort_by = $_GET['sort_by'] ?? 'date';
+                $order = $_GET['order'] ?? 'desc';
 
-            $query = "
-                SELECT F.*, U.Username, M.ID AS Materia_ID
-                FROM Files F
-                LEFT JOIN Users U ON F.User_id = U.id
-                LEFT JOIN Notes N ON N.id = F.Note_id
-                LEFT JOIN Materia M ON M.ID = N.Materia_ID
-                WHERE 1=1
-            ";
+                $query = "
+                    SELECT F.*, U.Username, M.ID AS Materia_ID
+                    FROM Files F
+                    LEFT JOIN Users U ON F.User_id = U.id
+                    LEFT JOIN Notes N ON N.id = F.Note_id
+                    LEFT JOIN Materia M ON M.ID = N.Materia_ID
+                    WHERE 1=1
+                ";
 
-            $params = [];
-            $types = "";
+                $params = [];
 
-            if (!empty($searchTerm)) {
-                $query .= " AND (F.Original_filename LIKE CONCAT('%', ?, '%') OR U.Username LIKE CONCAT('%', ?, '%'))";
-                $params[] = $searchTerm;
-                $params[] = $searchTerm;
-                $types .= "ss";
-            }
+                if (!empty($searchTerm)) {
+                    $query .= " AND (F.Original_filename LIKE :searchTerm OR U.Username LIKE :searchTerm2)";
+                    $params[':searchTerm'] = "%$searchTerm%";
+                    $params[':searchTerm2'] = "%$searchTerm%";
+                }
 
-            if (!empty($materia)) {
-                $query .= " AND Materia_ID = ?";
-                $params[] = $materia;
-                $types .= "i";
-            }
+                if (!empty($materia)) {
+                    $query .= " AND Materia_ID = :materia";
+                    $params[':materia'] = $materia;
+                }
 
-            if (!empty($autore)) {
-                $query .= " AND U.Username LIKE CONCAT('%', ?, '%')";
-                $params[] = $autore;
-                $types .= "s";
-            }
+                if (!empty($autore)) {
+                    $query .= " AND U.Username LIKE :autore";
+                    $params[':autore'] = "%$autore%";
+                }
 
-            if (!empty($from_date)) {
-                $query .= " AND F.Created_at >= ?";
-                $params[] = $from_date;
-                $types .= "s";
-            }
+                if (!empty($from_date)) {
+                    $query .= " AND F.Created_at >= :from_date";
+                    $params[':from_date'] = $from_date;
+                }
 
-            if (!empty($to_date)) {
-                $query .= " AND F.Created_at <= ?";
-                $params[] = $to_date;
-                $types .= "s";
-            }
+                if (!empty($to_date)) {
+                    $query .= " AND F.Created_at <= :to_date";
+                    $params[':to_date'] = $to_date;
+                }
 
-            $order_by_column = $sort_by === 'title' ? 'Original_filename' : 'Created_at';
-            $order_dir = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
-            $query .= " ORDER BY $order_by_column $order_dir";
+                $order_by_column = $sort_by === 'title' ? 'Original_filename' : 'Created_at';
+                $order_dir = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
+                $query .= " ORDER BY $order_by_column $order_dir";
 
-            $stmt = $conn->prepare($query);
-            if (!empty($params)) {
-                $stmt->bind_param($types, ...$params);
-            }
-            $stmt->execute();
-            $result = $stmt->get_result();
+                $stmt = $conn->prepare($query);
+                $stmt->execute($params);
+                $files = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $files = [];
-            while ($file = $result->fetch_assoc()) {
-                $files[] = $file;
-            }
-
-            if (!empty($files)): ?>
-                <h2>Files</h2>
-                <form method="POST" action="delete_files.php" onsubmit="return confirm('Sei sicuro di voler eliminare i file selezionati?');">
-                    <div class="file-actions">
-                        <button type="submit" class="delete-button">Elimina selezionati</button>
-                    </div>
-                    <div id="file-preview" class="file-preview">
-                        <?php foreach ($files as $file):
-                            $filePath = "../../uploads/" . $file['Stored_filename'];
-                            $fileName = htmlspecialchars($file['Original_filename']);
-                            $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-                            $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif']);
-                            $isPDF = strtolower($ext) === 'pdf';
-                            $isTxt = strtolower($ext) === 'txt';
-                        ?>
-                        <div class="file-container">
-                            <?php if ($isImage): ?>
-                                <img class="preview-image" src="<?= $filePath ?>" onclick="openModal('<?= $filePath ?>', 'image')">
-                            <?php elseif ($isPDF): ?>
-                                <p><?= $fileName ?></p>
-                                <canvas class="pdf-preview" data-pdf="<?= $filePath ?>"></canvas>
-                            <?php elseif ($isTxt): ?>
-                                <div class="file-icon" onclick="openText('<?= $filePath ?>')"><?= $fileName ?></div>
-                            <?php else: ?>
-                                <div class="file-icon"><?= $fileName ?></div>
-                            <?php endif; ?>
-                            <!-- Mostra checkbox se l'utente è l'autore del file o è admin -->
-                            <?php if ($file['User_id'] == $user_id || $user_type === 'admin'): ?>
-                                <input type="checkbox" name="file_ids[]" value="<?= $file['ID'] ?>">
-                            <?php endif; ?>
+                if (!empty($files)): ?>
+                    <h2>Files</h2>
+                    <form method="POST" action="delete_files.php" onsubmit="return confirm('Sei sicuro di voler eliminare i file selezionati?');">
+                        <div class="file-actions">
+                            <button type="submit" class="delete-button">Elimina selezionati</button>
                         </div>
-                        <?php endforeach; ?>
-                    </div>
-                </form>
-            <?php endif; ?>
+                        <div id="file-preview" class="file-preview">
+                            <?php foreach ($files as $file):
+                                $filePath = "../../uploads/" . htmlspecialchars($file['Stored_filename']);
+                                $fileName = htmlspecialchars($file['Original_filename']);
+                                $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                                $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif']);
+                                $isPDF = strtolower($ext) === 'pdf';
+                                $isTxt = strtolower($ext) === 'txt';
+                            ?>
+                            <div class="file-container">
+                                <?php if ($isImage): ?>
+                                    <img class="preview-image" src="<?= $filePath ?>" onclick="openModal('<?= $filePath ?>', 'image')">
+                                <?php elseif ($isPDF): ?>
+                                    <p><?= $fileName ?></p>
+                                    <canvas class="pdf-preview" data-pdf="<?= $filePath ?>"></canvas>
+                                <?php elseif ($isTxt): ?>
+                                    <div class="file-icon" onclick="openText('<?= $filePath ?>')"><?= $fileName ?></div>
+                                <?php else: ?>
+                                    <div class="file-icon"><?= $fileName ?></div>
+                                <?php endif; ?>
+                                <?php if ($file['User_id'] == $user_id || $user_type === 'admin'): ?>
+                                    <input type="checkbox" name="file_ids[]" value="<?= $file['ID'] ?>">
+                                <?php endif; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </form>
+                <?php endif;
+            } catch (PDOException $e) {
+                error_log("Errore nel recupero dei file: " . $e->getMessage());
+                echo "<p>Si è verificato un errore nel caricamento dei file.</p>";
+            }
+            ?>
 
             <!-- Modal -->
             <div id="modal-viewer" class="modal-viewer" style="display:none;" onclick="closeModal()">
@@ -224,9 +220,10 @@
         </div>
     </div>
 
-    <!-- Script -->
+    <!-- Script File Visualization -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="../../js/FileVisualization.js"></script>
+    <!-- Script Flatpickr per le date -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
     <script src="../js/Flatpickr.js"></script>

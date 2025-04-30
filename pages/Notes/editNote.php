@@ -2,50 +2,50 @@
     include "../../includes/db.php";
     session_start();
 
-    $row = "";
+    $row = [];
+    $files = [];
+
     if(isset($_GET['id'])) {
         $note_id = (int)$_GET['id'];
 
-        $query = "
-            SELECT N.Title, N.Content AS Content, M.ID AS MateriaID, M.Nome AS Materia, A.Nome AS Argomento
-            FROM Notes N
-            LEFT JOIN Materia M ON M.ID = N.Materia_ID
-            LEFT JOIN appunti_argomento AA ON AA.IDNote = N.ID
-            LEFT JOIN Argomento A ON A.ID = AA.IDArgomento
-            WHERE N.ID = ?
-        ";
+        try {
+            $query = "
+                SELECT N.Title, N.Content AS Content, M.ID AS MateriaID, M.Nome AS Materia, A.Nome AS Argomento
+                FROM Notes N
+                LEFT JOIN Materia M ON M.ID = N.Materia_ID
+                LEFT JOIN appunti_argomento AA ON AA.IDNote = N.ID
+                LEFT JOIN Argomento A ON A.ID = AA.IDArgomento
+                WHERE N.ID = :note_id
+            ";
 
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $note_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':note_id', $note_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Recupera i file allegati
+            $stmt_files = $conn->prepare("SELECT Original_filename, Stored_filename FROM Files WHERE Note_id = :note_id");
+            $stmt_files->bindParam(':note_id', $note_id, PDO::PARAM_INT);
+            $stmt_files->execute();
+            $files = $stmt_files->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch(PDOException $e) {
+            die("Errore nel recupero dei dati: " . $e->getMessage());
+        }
     }
-
-    // Recupera i file allegati
-    $stmt_files = $conn->prepare("SELECT Original_filename, Stored_filename FROM Files WHERE Note_id = ?");
-    $stmt_files->bind_param("i", $note_id);
-    $stmt_files->execute();
-    $result_files = $stmt_files->get_result();
-
-    while ($file = $result_files->fetch_assoc()) {
-        $files[] = $file;
-    }
-
-    $stmt_files->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <!--Link CSS-->
+    <!-- Link CSS -->
     <link rel="stylesheet" href="../../css/notes.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
-    <!--Link CSS File Visualization-->
     <link rel="stylesheet" href="../../css/fileVisualization.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Note</title>
+    <!-- Script JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/display/placeholder.min.js"></script>
@@ -64,16 +64,19 @@
             <div class="form-group">
                 <input type="hidden" name="note_id" value="<?= $note_id ?>">
 
-                <input type="text" name="title" id="title" placeholder="Titolo..." value="<?=$row['Title']?>" required>
+                <input type="text" name="title" id="title" placeholder="Titolo..." value="<?=htmlspecialchars($row['Title'] ?? '')?>" required>
 
                 <div class="container-materia">
                     <select name="materia" id="materia">
                         <?php
-                            $materie_query = "SELECT ID, Nome FROM Materia";
-                            $materie_result = $conn->query($materie_query);
-                            while($materia = $materie_result->fetch_assoc()) {
-                                $selected = ($materia['ID'] == ($row['MateriaID'] ?? null)) ? 'selected' : '';
-                                echo "<option value='{$materia['ID']}' $selected> {$materia['Nome']} </option>";
+                            try {
+                                $materie = $conn->query("SELECT ID, Nome FROM Materia")->fetchAll(PDO::FETCH_ASSOC);
+                                foreach($materie as $materia) {
+                                    $selected = ($materia['ID'] == ($row['MateriaID'] ?? null)) ? 'selected' : '';
+                                    echo "<option value='".htmlspecialchars($materia['ID'])."' $selected>".htmlspecialchars($materia['Nome'])."</option>";
+                                }
+                            } catch(PDOException $e) {
+                                die("Errore nel recupero delle materie: " . $e->getMessage());
                             }
                         ?>
                     </select>
@@ -81,11 +84,11 @@
             </div>
 
             <div class="editor-container">
-                <textarea id="editor" name="content" placeholder="Scrivi la tua nota..."><?php echo htmlspecialchars($row['Content'] ?? '');?></textarea>
+                <textarea id="editor" name="content" placeholder="Scrivi la tua nota..."><?=htmlspecialchars($row['Content'] ?? '')?></textarea>
             </div>
 
             <div class="form-group">
-                <input type="text" name="argomento" placeholder="Argomento..." class="tags-input" value="<?=$row['Argomento']?>">
+                <input type="text" name="argomento" placeholder="Argomento..." class="tags-input" value="<?=htmlspecialchars($row['Argomento'] ?? '')?>">
                 
                 <input type="file" id="file_upload" name="file_upload[]" multiple accept=".pdf,.doc,.docx,.txt,image/*" hidden>
                 <label for="file_upload" class="custom-file-upload">Seleziona file</label>
@@ -99,7 +102,7 @@
                     <h3>Allegati Presenti</h3>
                     <div id="file-preview" class="file-preview">
                         <?php foreach ($files as $file): 
-                            $filePath = "../../uploads/" . $file['Stored_filename'];
+                            $filePath = "../../uploads/" . htmlspecialchars($file['Stored_filename']);
                             $fileName = htmlspecialchars($file['Original_filename']);
                             $ext = pathinfo($fileName, PATHINFO_EXTENSION);
                             $isImage = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif']);
@@ -108,14 +111,14 @@
                         ?>
                             <div class="file-container">
                                 <?php if ($isImage): ?>
-                                    <img class="preview-image" src="<?php echo $filePath; ?>" onclick="openModal('<?php echo $filePath; ?>', 'image')">
+                                    <img class="preview-image" src="<?=$filePath?>" onclick="openModal('<?=$filePath?>', 'image')">
                                 <?php elseif ($isPDF): ?>
-                                    <p><?php echo $fileName; ?></p>
-                                    <canvas class="pdf-preview" data-pdf="<?php echo $filePath; ?>"></canvas>
+                                    <p><?=$fileName?></p>
+                                    <canvas class="pdf-preview" data-pdf="<?=$filePath?>"></canvas>
                                 <?php elseif ($isTxt): ?>
-                                    <div class="file-icon" onclick="openText('<?php echo $filePath; ?>')"><?php echo $fileName; ?></div>
+                                    <div class="file-icon" onclick="openText('<?=$filePath?>')"><?=$fileName?></div>
                                 <?php else: ?>
-                                    <div class="file-icon"><?php echo $fileName; ?></div>
+                                    <div class="file-icon"><?=$fileName?></div>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
@@ -131,11 +134,9 @@
                 </div>
             </div>
         </form>
-
     </div>
-    <!-- Script CodeMirror (textarea) -->
+    <!-- Script -->
     <script src="../../js/CodeMirror.js"></script>
-    <!-- Script File Anteprima -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="../../js/NewFiles.js"></script>
 </body>

@@ -2,9 +2,12 @@
     include "../../includes/db.php";
     session_start();
 
-    $stmt = $conn->prepare("SELECT * FROM Materia");
-    $stmt->execute();
-    $result = $stmt->get_result();
+    try {
+        $stmt = $conn->query("SELECT * FROM Materia");
+        $materie = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        die("Errore nel recupero delle materie: " . $e->getMessage());
+    }
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -12,22 +15,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Note</title>
-
-    <!--Link CSS General Structure -->
+    <!-- Link CSS -->
     <link rel="stylesheet" href="../../css/notes.css">
-    <!--Link CSS File Visualization -->
     <link rel="stylesheet" href="../../css/fileVisualization.css">
-    <!--Link CSS CodeMirror -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
-
-    <!-- JS Editor -->
+    <!-- JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/display/placeholder.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/selection/active-line.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closetag.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
-    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
 <body>
@@ -42,11 +40,9 @@
                 <input type="text" name="title" id="title" placeholder="Titolo..." required>
                 <div class="container-materia">
                     <select name="materia" id="materia">
-                        <?php
-                            while($row = $result->fetch_assoc()) {
-                                echo "<option value='{$row['ID']}'> {$row['Nome']} </option>";
-                            }
-                        ?>
+                        <?php foreach($materie as $materia): ?>
+                            <option value="<?=htmlspecialchars($materia['ID'])?>"><?=htmlspecialchars($materia['Nome'])?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>

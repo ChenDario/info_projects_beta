@@ -2,18 +2,30 @@
     include "../../includes/db.php";
     session_start();
 
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../../index.php");
+        exit();
+    }
+
     if (isset($_SESSION['flash_message'])) {
-        echo "<script>alert('{$_SESSION['flash_message']}');</script>";
-        unset($_SESSION['flash_message']); //Svuota il messaggio
+        echo "<script>alert('".htmlspecialchars($_SESSION['flash_message'], ENT_QUOTES)."');</script>";
+        unset($_SESSION['flash_message']);
     }
 
     $user_id = $_SESSION['user_id'];
 
-    $stmt = $conn->prepare("SELECT Nome, Cognome, Email, DATE(Updated_at) AS LastUpdate, Username  FROM Users WHERE ID = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+    try {
+        $stmt = $conn->prepare("SELECT Nome, Cognome, Email, DATE(Updated_at) AS LastUpdate, Username FROM Users WHERE ID = :user_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$user) {
+            throw new Exception("Utente non trovato");
+        }
+    } catch(PDOException $e) {
+        die("Errore nel recupero dei dati utente: " . $e->getMessage());
+    }
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +43,7 @@
     </div>
     <div class="profile-container">
         <h1>
-            <?=$user['Username']?>
+            <?=htmlspecialchars($user['Username'])?>
         </h1>
 
         <div class="info-block">
@@ -40,7 +52,7 @@
             </div>
             <div>
                 <div class="info-label">Name</div>
-                <div class="info-value"><?=$user['Nome']?></div>
+                <div class="info-value"><?=htmlspecialchars($user['Nome'])?></div>
             </div>
         </div>
 
@@ -50,7 +62,7 @@
             </div>
             <div>
                 <div class="info-label">Surname</div>
-                <div class="info-value"><?=$user['Cognome']?></div>
+                <div class="info-value"><?=htmlspecialchars($user['Cognome'])?></div>
             </div>
         </div>
 
@@ -60,7 +72,7 @@
             </div>
             <div>
                 <div class="info-label">Email</div>
-                <div class="info-value"><?=$user['Email']?></div>
+                <div class="info-value"><?=htmlspecialchars($user['Email'])?></div>
             </div>
         </div>
 
@@ -71,8 +83,7 @@
             </button>
         </div>
 
-        <div class="update-date">Last Update: <?=$user['LastUpdate']?></div>
-
+        <div class="update-date">Last Update: <?=htmlspecialchars($user['LastUpdate'])?></div>
     </div>
 </body>
 </html>

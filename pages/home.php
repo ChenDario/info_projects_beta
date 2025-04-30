@@ -2,66 +2,69 @@
     include "../includes/db.php";
     session_start();
 
+    // Gestione dei messaggi popup (se presenti in sessione)
     $popup_message = "";
     if (isset($_SESSION['popup_message'])) {
         $popup_message = $_SESSION['popup_message'];
-        unset($_SESSION['popup_message']); // Rimuove il messaggio dopo averlo mostrato
+        unset($_SESSION['popup_message']);
     }
 
+    // Processo di login quando viene inviato il form
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'], $_POST['password'])) {
-        // Rimozione degli spazi bianchi dai dati ricevuti
         $username = trim($_POST['username']);
         $password = trim($_POST['password']);
 
-        // Preparazione della query per ottenere l'utente in base al nome utente
-        $stmt = $conn->prepare("SELECT * FROM Users WHERE Username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        try {
+            // Verifica credenziali utente nel database
+            $stmt = $conn->prepare("SELECT * FROM Users WHERE Username = ?");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Se l'utente esiste
-        if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
+            if ($user) {
+                // Controllo password hashata
+                if (!password_verify($password, $user['Password_hash'])) {
+                    $_SESSION['message'] = "Password errata";
+                    header("Location: ../index.php");
+                    exit();
+                }
 
-            // Verifica se la password è corretta
-            if (!password_verify($password, $user['Password_hash'])) {
-                $_SESSION['message'] = "Password errata";
+                // Impostazione variabili di sessione per l'utente loggato
+                $_SESSION['user_id'] = $user['ID'];
+                $_SESSION['username'] = $user['Username'];
+                $_SESSION['user_type'] = $user['Tipo']; 
+            } else {
+                $_SESSION['message'] = "Username errato";
                 header("Location: ../index.php");
                 exit();
             }
-
-            // Salvataggio dell'ID utente nella sessione
-            $_SESSION['user_id'] = $user['ID'];
-            $_SESSION['username'] = $user['Username'];
-            $_SESSION['user_type'] = $user['Tipo']; 
-        } else {
-            // Username non trovato
-            $_SESSION['message'] = "Username errato";
+        } catch(PDOException $e) {
+            $_SESSION['message'] = "Errore durante il login";
             header("Location: ../index.php");
             exit();
         }
     }
 
-    // Controllo che l'utente sia loggato
+    // Reindirizzamento se l'utente non è loggato
     if (!isset($_SESSION['user_id'])) {
         header("Location: ../index.php");
         exit();
     }
 
-    // Recupero dei dati dell'utente loggato
-    $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT Username, Tipo FROM Users WHERE ID = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $userData = $result->fetch_assoc();
-    $user_type = $userData['Tipo'];
+    // Recupero dati utente per visualizzazione nella sidebar
+    try {
+        $stmt = $conn->prepare("SELECT Username, Tipo FROM Users WHERE ID = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user_type = $userData['Tipo'];
+    } catch(PDOException $e) {
+        die("Errore nel recupero dei dati utente: " . $e->getMessage());
+    }
 ?>
 
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <!-- CSS For General Structure -->
+    <!-- CSS General Structure -->
     <link rel="stylesheet" href="../css/home.css">
     <!-- CSS Notes Visualization -->
     <link rel="stylesheet" href="../css/noteVisual.css">
@@ -73,7 +76,7 @@
     <title>Home</title>
 </head>
 <body>
-    <!-- Messaggio di Errore per l'inserimento della nota-->
+    <!-- Visualizzazione popup message se presente -->
     <?php if (!empty($popup_message)) : ?>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
@@ -100,13 +103,15 @@
                     <select name="materia" id="materia" class="filter-input" form="filtersForm">
                         <option value="">Tutte</option>
                         <?php
-                            // Recupera tutte le materie dal DB per il filtro
-                            $stmt_m = $conn->prepare("SELECT * FROM Materia");
-                            $stmt_m->execute();
-                            $result = $stmt_m->get_result();
-                            while($row = $result->fetch_assoc()) {
-                                $selected = ($_GET['materia'] ?? '') == $row['ID'] ? "selected" : "";
-                                echo "<option value='{$row['ID']}' $selected>" . htmlspecialchars($row['Nome']) . "</option>";
+                            try {
+                                // Popolamento dropdown materie dal database
+                                $stmt_m = $conn->query("SELECT * FROM Materia");
+                                while($row = $stmt_m->fetch(PDO::FETCH_ASSOC)) {
+                                    $selected = ($_GET['materia'] ?? '') == $row['ID'] ? "selected" : "";
+                                    echo "<option value='{$row['ID']}' $selected>" . htmlspecialchars($row['Nome']) . "</option>";
+                                }
+                            } catch(PDOException $e) {
+                                die("Errore nel recupero delle materie: " . $e->getMessage());
                             }
                         ?>
                     </select>
@@ -117,7 +122,6 @@
                         <label for="files">Only show file/s</label>
                     </div>
                 </div>
-
                 <!-- Filtro per date -->
                 <div class="sidebar-item">
                     <label class="item-content">From Date (create)</label>
@@ -126,7 +130,6 @@
                     <label class="item-content">To Date</label>
                     <input type="text" id="to_date" name="to_date" class="filter-input" value="<?= $_GET['to_date'] ?? '' ?>" form="filtersForm" placeholder="Select Date...">
                 </div>
-
                 <!-- Filtro per ordinamento -->
                 <p class="item-content">Order</p>
                 <div class="sidebar-item">
@@ -139,13 +142,11 @@
                         <option value="desc" <?= ($_GET['order'] ?? '') == 'desc' ? 'selected' : '' ?>>DESC</option>
                     </select>
                 </div>
-
                 <!-- Form per applicare i filtri -->
                 <form method="GET" id="filtersForm">
                     <button type="submit" class="filter-button">Applica</button>
                 </form>
             </div>
-
             <!-- Logout -->
             <div class="logout-container">
                 <a href="logout.php" class="logout-link">
@@ -153,18 +154,16 @@
                 </a>
             </div>
         </div>
-
         <!-- Barra di ricerca -->
         <div class="navbar">
             <form method="GET" action="">
                 <input type="text" name="search" class="search-bar" placeholder="Cerca..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
             </form>
         </div>
-
-        <!-- Contenuto principale -->
+        <!-- Contenuto principale - Visualizzazione note -->
         <div class="container">
             <?php
-                // Recupero parametri dai filtri e ricerca
+                // Recupero parametri di filtraggio dalla query string
                 $searchTerm = $_GET['search'] ?? '';
                 $materia = $_GET['materia'] ?? '';
                 $autore = $_GET['autore'] ?? '';
@@ -172,8 +171,7 @@
                 $to_date = $_GET['to_date'] ?? '';
                 $sort_by = $_GET['sort_by'] ?? 'date';
                 $order = $_GET['order'] ?? 'desc';
-
-                // Query base per ottenere le note
+                // Costruzione query dinamica in base ai filtri
                 $query = "
                     SELECT DISTINCT N.*, U.Username, M.Nome AS MateriaNome 
                     FROM Notes N
@@ -184,74 +182,70 @@
                     WHERE 1=1
                 ";
 
-                // Parametri per bind_param
                 $params = [];
-                $types = "";
-
-                // Aggiunta dei filtri alla query
+                
+                // Aggiunta condizioni WHERE in base ai filtri selezionati
                 if (!empty($searchTerm)) {
                     $query .= " AND (
-                        N.Title LIKE CONCAT('%', ?, '%')
-                        OR N.Content LIKE CONCAT('%', ?, '%')
-                        OR A.Nome LIKE CONCAT('%', ?, '%')
+                        N.Title LIKE CONCAT('%', :searchTerm, '%')
+                        OR N.Content LIKE CONCAT('%', :searchTerm, '%')
+                        OR A.Nome LIKE CONCAT('%', :searchTerm, '%')
                     )";
-                    $params[] = $searchTerm;
-                    $params[] = $searchTerm;
-                    $params[] = $searchTerm;
-                    $types .= "sss";
+                    $params[':searchTerm'] = $searchTerm;
                 }                
                 if (!empty($materia)) {
-                    $query .= " AND Materia_ID = ?";
-                    $params[] = $materia;
-                    $types .= "i";
+                    $query .= " AND Materia_ID = :materia";
+                    $params[':materia'] = $materia;
                 }
                 if (!empty($autore)) {
-                    $query .= " AND U.Username LIKE CONCAT('%', ?, '%')";
-                    $params[] = $autore;
-                    $types .= "s";
+                    $query .= " AND U.Username LIKE CONCAT('%', :autore, '%')";
+                    $params[':autore'] = $autore;
                 }
                 if (!empty($from_date)) {
-                    $query .= " AND N.Created_at >= ?";
-                    $params[] = $from_date;
-                    $types .= "s";
+                    $query .= " AND N.Created_at >= :from_date";
+                    $params[':from_date'] = $from_date;
                 }
                 if (!empty($to_date)) {
-                    $query .= " AND N.Created_at <= ?";
-                    $params[] = $to_date;
-                    $types .= "s";
+                    $query .= " AND N.Created_at <= :to_date";
+                    $params[':to_date'] = $to_date;
                 }
-                // Ordinamento dei risultati
+
+                // Impostazione ordinamento risultati
                 $order_by_column = $sort_by === 'title' ? 'N.Title' : 'N.Updated_at';
                 $order_dir = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
                 $query .= " ORDER BY $order_by_column $order_dir";
-                // Preparazione e esecuzione della query
-                $stmt = $conn->prepare($query);
-                if (!empty($params)) {
-                    $stmt->bind_param($types, ...$params);
-                }
-                $stmt->execute();
-                $result = $stmt->get_result();
-                // Visualizzazione dei risultati
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "
-                            <div class='card'>
-                                <h2 class='card-title'>" . htmlspecialchars($row['Title']) . "</h2>
-                                <div class='card-content-wrapper'>
-                                    <p class='card-content'>" . nl2br($row['Content']) . "</p>
-                                </div>
-                                <div class='note-actions'>
-                                    <a href='Notes/noteDetail.php?id={$row['ID']}' class='read-more'>More</a>
-                        ";
-                        // Controlla se l'utente loggato è l'autore della nota
-                        if ($row['User_id'] == $user_id || $user_type === 'admin') {
-                            echo "
-                                <a href='Notes/editNote.php?id={$row['ID']}' class='read-more'>Edit</a>
-                                <a href='Notes/deleteNote.php?id={$row['ID']}' class='read-more' onclick='return confirm(\"Sei sicuro di voler cancellare questa nota?\")'>Delete</a>
-                            ";
-                        }
-                        echo "</div></div>";
+
+                try {
+                    // Esecuzione query e visualizzazione risultati
+                    $stmt = $conn->prepare($query);
+                    foreach ($params as $key => &$val) {
+                        $stmt->bindParam($key, $val);
                     }
+                    $stmt->execute();
+                    
+                    if ($stmt->rowCount() > 0) {
+                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            echo "
+                                <div class='card'>
+                                    <h2 class='card-title'>" . htmlspecialchars($row['Title']) . "</h2>
+                                    <div class='card-content-wrapper'>
+                                        <p class='card-content'>" . nl2br($row['Content']) . "</p>
+                                    </div>
+                                    <div class='note-actions'>
+                                        <a href='Notes/noteDetail.php?id={$row['ID']}' class='read-more'>More</a>
+                            ";
+                            // Mostra pulsanti modifica/cancella solo per il proprietario o admin
+                            if ($row['User_id'] == $_SESSION['user_id'] || $user_type === 'admin') {
+                                echo "
+                                    <a href='Notes/editNote.php?id={$row['ID']}' class='read-more'>Edit</a>
+                                    <a href='Notes/deleteNote.php?id={$row['ID']}' class='read-more' onclick='return confirm(\"Sei sicuro di voler cancellare questa nota?\")'>Delete</a>
+                                ";
+                            }
+                            echo "</div></div>";
+                        }
+                    }
+                } catch(PDOException $e) {
+                    die("Errore nel recupero delle note: " . $e->getMessage());
                 }
             ?>
         </div>
@@ -264,10 +258,11 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
     <script src="../js/Flatpickr.js"></script>
+    
     <script>
+        // Gestione checkbox per visualizzazione solo file
         function handleFileCheckbox(checkbox) {
             if (checkbox.checked) {
-                // Reindirizza alla pagina desiderata
                 window.location.href = 'Files/fileOnlyView.php';
             }
         }

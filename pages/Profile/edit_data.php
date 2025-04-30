@@ -10,12 +10,18 @@
 
     $user_id = $_SESSION['user_id'];
 
-    $stmt = $conn->prepare("SELECT Nome, Cognome, Email, Username  FROM Users WHERE ID = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-
+    try {
+        $stmt = $conn->prepare("SELECT Nome, Cognome, Email, Username FROM Users WHERE ID = :user_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$user) {
+            throw new Exception("Utente non trovato");
+        }
+    } catch(PDOException $e) {
+        die("Errore nel recupero dei dati utente: " . $e->getMessage());
+    }
 ?>
 
 <!DOCTYPE html>
@@ -31,16 +37,16 @@
     <div class="container">
         <form action="edit_info.php" method="post">
             <label for="">Nome</label>
-            <input type="text" placeholder="Nome..." name="nome" value="<?=$user['Nome']?>">
+            <input type="text" placeholder="Nome..." name="nome" value="<?=htmlspecialchars($user['Nome'])?>">
             
             <label for="">Cognome</label>
-            <input type="text" placeholder="Cognome..." name="cognome" value="<?=$user['Cognome']?>">
+            <input type="text" placeholder="Cognome..." name="cognome" value="<?=htmlspecialchars($user['Cognome'])?>">
             
             <label for="">Email</label>
-            <input type="email" placeholder="Email..." name="email" value="<?=$user['Email']?>">
+            <input type="email" placeholder="Email..." name="email" value="<?=htmlspecialchars($user['Email'])?>">
 
             <label for="">Username</label>
-            <input type="text" placeholder="Username..." name="username" value="<?=$user['Username']?>">
+            <input type="text" placeholder="Username..." name="username" value="<?=htmlspecialchars($user['Username'])?>">
 
             <button type="submit"> Edit </button>
         </form>
