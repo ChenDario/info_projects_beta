@@ -1,23 +1,23 @@
 <?php  
-include "../../includes/db.php";
-session_start();
+    include "../../includes/db.php";
+    session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../index.php");
-    exit();
-}
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../index.php");
+        exit();
+    }
 
-// Recupero dati utente
-try {
-    $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT Username, Tipo FROM Users WHERE ID = :user_id");
-    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
-    $user_type = $userData['Tipo'];
-} catch (PDOException $e) {
-    die("Errore nel recupero dei dati utente: " . $e->getMessage());
-}
+    // Recupero dati utente
+    try {
+        $user_id = $_SESSION['user_id'];
+        $stmt = $conn->prepare("SELECT Username, Tipo FROM Users WHERE ID = :user_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user_type = $userData['Tipo'];
+    } catch (PDOException $e) {
+        die("Errore nel recupero dei dati utente: " . $e->getMessage());
+    }
 ?>
 
 <!DOCTYPE html>
@@ -26,10 +26,11 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Files</title>
-    <!-- CSS -->
+    <!-- CSS General Structure -->
     <link rel="stylesheet" href="../../css/home.css">
     <link rel="stylesheet" href="../../css/files.css">
     <link rel="stylesheet" href="../../css/fileVisualization.css">
+    <!-- CSS Date -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
@@ -108,8 +109,7 @@ try {
         <!-- Barra di ricerca -->
         <div class="navbar">
             <form method="GET" action="">
-                <input type="text" name="search" class="search-bar" placeholder="Cerca..." 
-                       value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                <input type="text" name="search" class="search-bar" placeholder="Cerca..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
             </form>
         </div>
 
@@ -171,11 +171,11 @@ try {
                 $files = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 if (!empty($files)): ?>
-                    <h2>Files</h2>
-                    <form method="POST" action="delete_files.php" onsubmit="return confirm('Sei sicuro di voler eliminare i file selezionati?');">
-                        <div class="file-actions">
+                    <form method="POST" action="delete_files.php" id="delete-form" onsubmit="return confirm('Sei sicuro di voler eliminare i file selezionati?');">
+                        <div class="file-header">
+                            <h2 class="file-title">Files</h2>
                             <button type="submit" class="delete-button">Elimina selezionati</button>
-                        </div>
+                        </div>    
                         <div id="file-preview" class="file-preview">
                             <?php foreach ($files as $file):
                                 $filePath = "../../uploads/" . htmlspecialchars($file['Stored_filename']);
@@ -185,21 +185,27 @@ try {
                                 $isPDF = strtolower($ext) === 'pdf';
                                 $isTxt = strtolower($ext) === 'txt';
                             ?>
-                            <div class="file-container">
+                            <div class="file-container" onclick="toggleCheckbox(this)">
                                 <?php if ($isImage): ?>
-                                    <img class="preview-image" src="<?= $filePath ?>" onclick="openModal('<?= $filePath ?>', 'image')">
+                                    <div class="img-div">
+                                        <img class="preview-image" src="<?= $filePath ?>" onclick="event.stopPropagation(); openModal('<?= $filePath ?>', 'image')">
+                                    </div>
                                 <?php elseif ($isPDF): ?>
-                                    <p><?= $fileName ?></p>
-                                    <canvas class="pdf-preview" data-pdf="<?= $filePath ?>"></canvas>
+                                    <div id="pdf-div">
+                                        <p><?= $fileName ?></p>
+                                        <div id="canvas-pdf" onclick="event.stopPropagation(); openModal('<?= $filePath ?>', 'pdf')">
+                                            <canvas class="pdf-preview" data-pdf="<?= $filePath ?>"></canvas>
+                                        </div>
+                                    </div>
                                 <?php elseif ($isTxt): ?>
-                                    <div class="file-icon" onclick="openText('<?= $filePath ?>')"><?= $fileName ?></div>
+                                    <div class="file-icon" onclick="event.stopPropagation(); openText('<?= $filePath ?>')"><?= $fileName ?></div>
                                 <?php else: ?>
                                     <div class="file-icon"><?= $fileName ?></div>
                                 <?php endif; ?>
                                 <?php if ($file['User_id'] == $user_id || $user_type === 'admin'): ?>
-                                    <input type="checkbox" name="file_ids[]" value="<?= $file['ID'] ?>">
+                                    <input type="checkbox" class="file-checkbox" name="file_ids[]" value="<?= $file['ID'] ?>">
                                 <?php endif; ?>
-                            </div>
+                                </div>
                             <?php endforeach; ?>
                         </div>
                     </form>
@@ -232,6 +238,18 @@ try {
         function handleFileCheckbox(checkbox) {
             if (checkbox.checked) {
                 window.location.href = '../home.php';
+            }
+        }
+        document.querySelectorAll('.file-checkbox').forEach(cb => {
+            cb.addEventListener('change', () => {
+                cb.closest('.file-container').classList.toggle('selected', cb.checked);
+            });
+        });
+        function toggleCheckbox(container) {
+            const checkbox = container.querySelector('.file-checkbox');
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                container.classList.toggle('selected', checkbox.checked);
             }
         }
     </script>

@@ -70,13 +70,14 @@
     max-width: 150px;
     max-height: 150px;
     margin: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid #4e4e4e;
     border-radius: 5px;
 }
 
 /* Anteprima PDF */
 .pdf-preview {
     width: 100px;
+    height: 130px;
     border: 1px solid #999;
     margin-top: 5px;
     border-radius: 5px;
