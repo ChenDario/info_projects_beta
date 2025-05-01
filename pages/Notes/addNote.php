@@ -15,9 +15,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Note</title>
-    <!-- Link CSS -->
+    <!-- Link CSS  General Structure -->
     <link rel="stylesheet" href="../../css/notes.css">
     <link rel="stylesheet" href="../../css/fileVisualization.css">
+    <!-- Link CSS CodeMirror -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <!-- JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
