@@ -85,5 +85,11 @@
 
         <div class="update-date">Last Update: <?=htmlspecialchars($user['LastUpdate'])?></div>
     </div>
+
+    <div class="delete-account-wrapper">
+        <form action="delete_user.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete your account??');">
+            <button type="submit" class="delete-btn"> Delete Account </button>
+        </form>
+    </div>
 </body>
 </html>

@@ -8,13 +8,14 @@ body {
     color: #ffffff;
     font-family: 'Inter', sans-serif;
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Cambia da row-centrato a colonna */
     align-items: center;
-    height: 100vh;
     margin: 0;
+    padding: 40px 0; /* spazio verticale */
 }
 
 .profile-container {
+    margin-top: 50px;
     background-color: #1a1a1a;
     padding: 30px;
     border-radius: 20px;
@@ -138,3 +139,26 @@ h1 {
     width: 25px;
     height: 25px;
 }
+
+.delete-account-wrapper {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.delete-btn {
+    margin-top: 25px;
+    background-color: #ff4c4c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ff4c4c55;
+    transition: background-color 0.3s;
+    font-weight: 600;
+}
+
+.delete-btn:hover {
+    background-color: #e60000;
+}
+
