@@ -90,3 +90,44 @@ table tr:hover {
 .floating-button:hover {
     background-color: #444;
 }
+
+.delete-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #bb2d2d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.delete-button:hover {
+    background-color: #e60000;
+}
+
+.success-message, .error-message {
+    width: 30%;
+    margin: 10px auto;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.success-message {
+    background-color: #2e7d32;
+    color: #e4e4e4;
+    border: 1px solid #4CAF50;
+}
+
+.error-message {
+    background-color: #a94442;
+    color: #f9d6d5;
+    border: 1px solid #e60000;
+}
