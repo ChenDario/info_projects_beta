@@ -73,7 +73,12 @@ input{
     margin-left: 10px;
 }
 
+/* Bottone posizionato a sinistra */
 .floating-button {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
     padding: 10px 20px;
     background-color: #333;
     color: white;
@@ -81,6 +86,8 @@ input{
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .floating-button:hover {
@@ -88,17 +95,16 @@ input{
 }
 
 .header {
-    display: flex; 
-    align-items: center;
-    justify-content: space-between;
+    position: relative;
     width: 80%;
     margin: 20px auto;
-    position: relative;
+    text-align: center;
 }
 
 .header h1 {
-    margin: 0 auto;
+    margin: 0;
     font-size: 28px;
+    color: #ffffff;
 }
 
 .form-group {

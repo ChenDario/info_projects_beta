@@ -41,7 +41,7 @@
                 <?php echo strtoupper(substr($userData['Username'], 0, 1)); ?>
             </div>
             <h3 class="username">
-                <a href="Profile/profile.php"><?= htmlspecialchars($userData['Username']) ?></a>
+                <a href="../Profile/profile.php"><?= htmlspecialchars($userData['Username']) ?></a>
             </h3>
 
             <div class="sidebar-sections">
@@ -100,7 +100,7 @@
             </div>
 
             <div class="logout-container">
-                <a href="logout.php" class="logout-link">
+                <a href="../logout.php" class="logout-link">
                     <img src="../../images/logout.png" alt="Logout" class="logout-icon">
                 </a>
             </div>
@@ -174,7 +174,7 @@
                     <form method="POST" action="delete_files.php" id="delete-form" onsubmit="return confirm('Sei sicuro di voler eliminare i file selezionati?');">
                         <div class="file-header">
                             <h2 class="file-title">Files</h2>
-                            <button type="submit" class="delete-button">Elimina selezionati</button>
+                            <button type="submit" class="delete-button"> Delete Selected </button>
                         </div>    
                         <div id="file-preview" class="file-preview">
                             <?php foreach ($files as $file):

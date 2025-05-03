@@ -114,7 +114,7 @@
                                     <img class="preview-image" src="<?=$filePath?>" onclick="openModal('<?=$filePath?>', 'image')">
                                 <?php elseif ($isPDF): ?>
                                     <p><?=$fileName?></p>
-                                    <canvas class="pdf-preview" data-pdf="<?=$filePath?>"></canvas>
+                                    <canvas class="pdf-preview" data-pdf="<?=$filePath?>" onclick="openModal('<?=$filePath?>', 'pdf')"></canvas>
                                 <?php elseif ($isTxt): ?>
                                     <div class="file-icon" onclick="openText('<?=$filePath?>')"><?=$fileName?></div>
                                 <?php else: ?>
@@ -135,9 +135,11 @@
             </div>
         </form>
     </div>
-    <!-- Script -->
+    <!-- Script  CodeMirror textarea-->
     <script src="../../js/CodeMirror.js"></script>
+    <!-- Script File Visualization New and Stored-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="../../js/NewFiles.js"></script>
+    <script src="../../js/FileVisualization.js"></script>
 </body>
 </html>

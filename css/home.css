@@ -116,6 +116,24 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Ombra sotto la navbar */
 }
 
+.navbar a{
+    text-decoration: none;
+    color: #4CAF50;
+}
+
+#superadmin a {
+    padding-left: 15px;
+}
+
+#superadmin{
+    width: 100%;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+}
+
 /* Barra di ricerca */
 .search-bar {
     padding: 10px;

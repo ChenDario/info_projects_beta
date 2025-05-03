@@ -156,6 +156,9 @@
         </div>
         <!-- Barra di ricerca -->
         <div class="navbar">
+            <div id="superadmin">
+                <a href="Admin/superadmin.php"> SuperAdmin </a>
+            </div>
             <form method="GET" action="">
                 <input type="text" name="search" class="search-bar" placeholder="Cerca..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
             </form>
