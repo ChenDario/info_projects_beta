@@ -126,13 +126,13 @@
                 $order = $_GET['order'] ?? 'desc';
 
                 $query = "
-                    SELECT F.*, U.Username, M.ID AS Materia_ID
-                    FROM Files F
-                    LEFT JOIN Users U ON F.User_id = U.id
-                    LEFT JOIN Notes N ON N.id = F.Note_id
-                    LEFT JOIN Materia M ON M.ID = N.Materia_ID
-                    WHERE 1=1
-                ";
+                SELECT F.*, U.Username, M.ID AS Materia_ID
+                FROM Files F
+                LEFT JOIN Users U ON F.User_id = U.id
+                LEFT JOIN Notes N ON N.id = F.Note_id
+                LEFT JOIN Materia M ON M.ID = N.Materia_ID
+                WHERE 1=1
+            ";
 
 
                 $params = [];
