@@ -192,9 +192,9 @@
                 // Aggiunta condizioni WHERE in base ai filtri selezionati
                 if (!empty($searchTerm)) {
                     $query .= " AND (
-                        N.Title LIKE CONCAT('%', :searchTerm, '%')
-                        OR N.Content LIKE CONCAT('%', :searchTerm, '%')
-                        OR A.Nome LIKE CONCAT('%', :searchTerm, '%')
+                        LOWER(N.Title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                        OR LOWER(N.Content) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                        OR LOWER(A.Nome) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
                     )";
                     $params[':searchTerm'] = $searchTerm;
                 }                
@@ -203,7 +203,7 @@
                     $params[':materia'] = $materia;
                 }
                 if (!empty($autore)) {
-                    $query .= " AND U.Username LIKE CONCAT('%', :autore, '%')";
+                    $query .= " AND LOWER(U.Username) LIKE LOWER(CONCAT('%', :autore, '%'))";
                     $params[':autore'] = $autore;
                 }
                 if (!empty($from_date)) {

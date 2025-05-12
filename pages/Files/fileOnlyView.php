@@ -134,7 +134,14 @@
                     WHERE 1=1
                 ";
 
+
                 $params = [];
+
+                // Filtro per utente se non è admin
+                if ($user_type !== 'admin') {
+                    $query .= " AND F.User_id = :user_id";
+                    $params[':user_id'] = $user_id;
+                }
 
                 if (!empty($searchTerm)) {
                     $query .= " AND (F.Original_filename LIKE :searchTerm OR U.Username LIKE :searchTerm2)";
