@@ -15,7 +15,7 @@ body {
 
 .container {
     background-color: #2d2d2d;
-    padding: 40px;
+    padding: 30px;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     width: 350px;
@@ -55,7 +55,7 @@ input::placeholder {
 
 .links {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-top: 15px;
 }
 
@@ -84,4 +84,47 @@ button {
 
 button:hover {
     background-color: #45a049;
+}
+
+.checkbox-container {
+display: flex;
+align-items: center;
+gap: 10px;
+font-size: 13px;
+color: #cccccc;
+}
+
+.checkbox-container input[type="checkbox"] {
+    accent-color: #4CAF50;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-container a {
+    color: #4CAF50;
+    text-decoration: underline;
+}
+
+.checkbox-container a:hover {
+    color: #45a049;
+}
+
+/* Link di logout */
+.logout-link {
+    position: absolute;
+    top: 20px;  /* Sposta in alto */
+    left: 15px; /* Mantieni a sinistra */
+}
+
+.logout-link img {
+    width: 24px;  /* Riduce la dimensione */
+    height: auto;
+    cursor: pointer;
+    filter: brightness(0.9);
+    transition: filter 0.2s ease;
+}
+
+.logout-link img:hover {
+    filter: brightness(1.2); /* Aumenta la luminosità al passaggio del mouse */
 }

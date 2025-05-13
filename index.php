@@ -27,7 +27,6 @@
             <button type="submit">Login</button>
 
             <div class="links">
-                <a href="pages/forgot-password.php">Password dimenticata?</a>
                 <a href="pages/SignUp/signup.php">Registrati</a>
             </div>
         </form>

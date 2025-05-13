@@ -263,7 +263,12 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
     <script src="../js/Flatpickr.js"></script>
-    
+    <!-- MathJax: supporto LaTeX per le formule matematiche-->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
     <script>
         // Gestione checkbox per visualizzazione solo file
         function handleFileCheckbox(checkbox) {

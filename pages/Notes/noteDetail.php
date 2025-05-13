@@ -71,7 +71,7 @@
             <button class="floating-button" onclick="location.href='../home.php'">Home</button>
         </div>
 
-        <h1><?=$note_title?></h1>
+        <h1 id="pageTitle"><?=$note_title?></h1>
 
         <div class="info">
             <?php
@@ -80,7 +80,7 @@
         </div>
         
         <div class="note-content">
-            <p><?=nl2br(htmlspecialchars($note_content))?></p>    
+            <p><?=nl2br($note_content)?></p>    
         </div>
 
         <?php if (!empty($files)): ?>
@@ -123,5 +123,10 @@
     <!-- Script File Anteprima -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="../../js/FileVisualization.js"></script>
+    <!-- MathJax: supporto LaTeX -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
 </body>
 </html>
