@@ -16,7 +16,7 @@
             // Inizia transazione
             $conn->beginTransaction();
             // 1. Verifica/Crea argomento
-            $stmt = $conn->prepare("SELECT ID FROM Argomento WHERE Nome = :argomento");
+            $stmt = $conn->prepare("SELECT ID FROM Argomento WHERE LOWER(Nome) = LOWER(:argomento)");
             $stmt->bindParam(':argomento', $argomento);
             $stmt->execute();
             

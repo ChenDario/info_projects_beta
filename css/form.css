@@ -111,13 +111,13 @@ color: #cccccc;
 }
 
 /* Link di logout */
-.logout-link {
+.arrow-back {
     position: absolute;
     top: 20px;  /* Sposta in alto */
     left: 15px; /* Mantieni a sinistra */
 }
 
-.logout-link img {
+.arrow-back img {
     width: 24px;  /* Riduce la dimensione */
     height: auto;
     cursor: pointer;
@@ -125,6 +125,6 @@ color: #cccccc;
     transition: filter 0.2s ease;
 }
 
-.logout-link img:hover {
+.arrow-backk img:hover {
     filter: brightness(1.2); /* Aumenta la luminosità al passaggio del mouse */
 }

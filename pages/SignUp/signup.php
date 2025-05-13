@@ -13,8 +13,8 @@
 </head>
 <body>
     <div class="logout-container">
-        <a href="../../index.php" class="logout-link">
-            <img src="../../images/arrow_back.png" alt="Logout" class="logout-icon">
+        <a href="../../index.php" class="arrow-back">
+            <img src="../../images/arrow_back.png" alt="Logout" class="back-icon">
         </a>
     </div>
     <div class="container">

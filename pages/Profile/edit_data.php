@@ -34,6 +34,11 @@
     <title>Edit</title>
 </head>
 <body>
+    <div class="logout-container">
+        <a href="profile.php" class="arrow-back">
+            <img src="../../images/arrow_back.png" alt="Logout" class="back-icon">
+        </a>
+    </div>
     <div class="container">
         <form action="edit_info.php" method="post">
             <label for="">Nome</label>
