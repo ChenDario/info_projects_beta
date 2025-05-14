@@ -192,11 +192,14 @@
                 // Aggiunta condizioni WHERE in base ai filtri selezionati
                 if (!empty($searchTerm)) {
                     $query .= " AND (
-                        LOWER(N.Title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
-                        OR LOWER(N.Content) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
-                        OR LOWER(A.Nome) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
-                    )";
-                    $params[':searchTerm'] = $searchTerm;
+                    LOWER(N.Title) LIKE LOWER(CONCAT('%', :searchTermTitle, '%'))
+                    OR LOWER(N.Content) LIKE LOWER(CONCAT('%', :searchTermContent, '%'))
+                    OR LOWER(A.Nome) LIKE LOWER(CONCAT('%', :searchTermArgomento, '%'))
+                )";
+                $params[':searchTermTitle'] = $searchTerm;
+                $params[':searchTermContent'] = $searchTerm;
+                $params[':searchTermArgomento'] = $searchTerm;
+
                 }                
                 if (!empty($materia)) {
                     $query .= " AND Materia_ID = :materia";
@@ -219,7 +222,10 @@
                 $order_by_column = $sort_by === 'title' ? 'N.Title' : 'N.Updated_at';
                 $order_dir = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
                 $query .= " ORDER BY $order_by_column $order_dir";
-
+                
+                echo "<pre>";
+                var_dump($query);
+                echo "</pre>";
                 try {
                     // Esecuzione query e visualizzazione risultati
                     $stmt = $conn->prepare($query);
@@ -227,7 +233,6 @@
                         $stmt->bindParam($key, $val);
                     }
                     $stmt->execute();
-                    
                     if ($stmt->rowCount() > 0) {
                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             echo "
@@ -248,6 +253,8 @@
                             }
                             echo "</div></div>";
                         }
+                    } else {
+                        echo "<div class='case'><p> Nothing Here...</p></div>";
                     }
                 } catch(PDOException $e) {
                     die("Errore nel recupero delle note: " . $e->getMessage());

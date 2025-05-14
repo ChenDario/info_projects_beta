@@ -34,6 +34,11 @@
         <div class="header">
             <button class="floating-button" onclick="location.href='../home.php'">Home</button>
             <h1>Adding Note</h1>
+            <form id="preview-form" action="preview.php" method="post" target="_blank">
+                <input type="hidden" name="title" id="preview-title">
+                <input type="hidden" name="content" id="preview-content">
+                <button type="submit" class="btn-float">Preview</button>
+            </form>
         </div>
 
         <form action="save_note.php" method="post" enctype="multipart/form-data">
@@ -75,5 +80,8 @@
     <script src="../../js/CodeMirror.js"></script>
     <!-- Script File Anteprima -->
     <script src="../../js/Anteprimafile.js"></script>
+    <!-- Script Preview -->
+    <script src="../../js/Preview.js"></script>
+
 </body>
 </html>
