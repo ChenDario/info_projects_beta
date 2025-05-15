@@ -51,8 +51,8 @@
                             <td>{$row['Cognome']}</td>
                             <td>{$row['Email']}</td>
                             <td>{$row['Tipo']}</td>
-                            <td>{$row['Created_at']}</td>
-                            <td>{$row['Updated_at']}</td>
+                            <td>{$row['Created_At']}</td>
+                            <td>{$row['Updated_At']}</td>
                         </tr>";
                     }
                 } catch (PDOException $e) {

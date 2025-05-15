@@ -222,10 +222,7 @@
                 $order_by_column = $sort_by === 'title' ? 'N.Title' : 'N.Updated_at';
                 $order_dir = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
                 $query .= " ORDER BY $order_by_column $order_dir";
-                
-                echo "<pre>";
-                var_dump($query);
-                echo "</pre>";
+
                 try {
                     // Esecuzione query e visualizzazione risultati
                     $stmt = $conn->prepare($query);
